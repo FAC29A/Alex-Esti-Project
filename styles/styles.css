@@ -1,1 +1,24 @@
+/*Global variables*/
+:root {
+    --white: #fff;
+    --lightest-color: #f4f4f4;
+    --lightest-transparent:rgba(233, 233, 233, 0.767);
+    --dark-white: #ddd;
+    --light-grey: rgba(146,146,146,0.45);
+    --medium-grey: rgba(209,209,209,0.45);
+    --medium-dark-grey: rgba(37,37,37,0.51);
+    --dark-grey: rgba(0,0,0,0.58);
+    --darker-grey: rgba(0,0,0,0.85);
+    --burgundy: rgba(87,10,10,0.75);
 
+    --font-titles: WindSong, cursive;
+    --font-main: Prompt, sans-serif;
+
+    --box-shadow-light: 0 0 1.25rem rgba(0,0,0,0.58);
+    --box-shadow-dark: 0 0 1.25rem rgba(0,0,0,0.8);
+    --box-shadow-small: 0 0 0.75rem rgba(0,0,0,0.4);
+} 
+
+
+/*Media Query for phones */
+@media (max-width: 767px) { }
