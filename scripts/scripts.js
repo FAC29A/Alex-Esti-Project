@@ -24,32 +24,14 @@ function initializeMap() {
 
   // Initialize a layer group for markers
   markersLayer = L.layerGroup().addTo(map);
+
+  map.addEventListener("move", () => {
+    const mapCenter = map.getCenter();
+    // Update the latitude and longitude input fields with the map's center coordinates
+    document.getElementById("latitude").value = mapCenter.lat.toFixed(6);
+    document.getElementById("longitude").value = mapCenter.lng.toFixed(6);
+  });
 }
-
-
-/*//News
-const apiKey = "801d3276710442a5830455e153a24b1f";
-const url =
-  "https://newsapi.org/v2/everything?q=tesla&from=2023-10-14&sortBy=publishedAt&apiKey=";
-const completeUrl = url + apiKey;
-console.log(completeUrl);
-
-const request = new Request(completeUrl);
-
-async function getData() {
-  try {
-    const response = await fetch(request);
-    const data = await response.json();
-    if (response.status === 200) {
-      console.log("Success", data);
-    } else {
-      console.log("Server Error", data.error);
-    }
-  } catch (error) {
-    console.log("Fetch Error", error);
-  }
-}
-getData();*/
 
 //Police
 function handleFormSubmit(event) {
@@ -74,7 +56,7 @@ function handleFormSubmit(event) {
       const data = await response.json();
       if (response.status === 200) {
         console.log("Success", data);
-        for (let i = 0; i < 500; i++) {
+        for (let i = 0; i < 400; i++) {
           var marker = L.marker([
             data[i].location.latitude,
             data[i].location.longitude,
@@ -93,15 +75,26 @@ function handleFormSubmit(event) {
   getData();
 }
 
-//Button to recenter map
-const centerButton = document.getElementById("center");
+/*//News
+const apiKey = "801d3276710442a5830455e153a24b1f";
+const url =
+  "https://newsapi.org/v2/everything?q=tesla&from=2023-10-14&sortBy=publishedAt&apiKey=";
+const completeUrl = url + apiKey;
+console.log(completeUrl);
 
-centerButton.addEventListener("click", () => {
-  // Get the center coordinates of the map
-  const mapCenter = map.getCenter();
-  
-  // Update the latitude and longitude input fields with the map's center coordinates
-  document.getElementById("latitude").value = mapCenter.lat.toFixed(6);
-  document.getElementById("longitude").value = mapCenter.lng.toFixed(6);
+const request = new Request(completeUrl);
 
-});
+async function getData() {
+  try {
+    const response = await fetch(request);
+    const data = await response.json();
+    if (response.status === 200) {
+      console.log("Success", data);
+    } else {
+      console.log("Server Error", data.error);
+    }
+  } catch (error) {
+    console.log("Fetch Error", error);
+  }
+}
+getData();*/
