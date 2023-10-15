@@ -11,8 +11,8 @@
     --darker-grey: rgba(0,0,0,0.85);
     --burgundy: rgba(87,10,10,0.75);
 
-    --font-titles: WindSong, cursive;
-    --font-main: Prompt, sans-serif;
+    --font-titles:'Roboto', sans-serif;
+    --font-main: 'Roboto', sans-serif;
 
     --box-shadow-light: 0 0 1.25rem rgba(0,0,0,0.58);
     --box-shadow-dark: 0 0 1.25rem rgba(0,0,0,0.8);
