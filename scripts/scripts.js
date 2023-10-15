@@ -3,6 +3,7 @@ let longitude = -0.11337;
 const myForm = document.querySelector("form");
 const mapElement = document.getElementById("map");
 let map; // Declare the map variable outside of the functions
+let markersLayer; // Declare a variable to store markers layer
 
 document.addEventListener("DOMContentLoaded", function () {
   // Wait for the DOM to be ready
@@ -20,23 +21,11 @@ function initializeMap() {
     attribution:
       '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
   }).addTo(map);
-}
-/*
-function handleFormSubmit(event) {
-  event.preventDefault();
-  const formData = new FormData(myForm);
-  const formObject = Object.fromEntries(formData);
 
-  const newLatitude = parseFloat(formObject.latitude);
-  const newLongitude = parseFloat(formObject.longitude);
-
-  updateMap(newLatitude, newLongitude);
+  // Initialize a layer group for markers
+  markersLayer = L.layerGroup().addTo(map);
 }
 
-function updateMap(varLatitude, varLongitude) {
-  map.setView([varLatitude, varLongitude], 13);
-  console.log(`Updating map`);
-}*/
 
 /*//News
 const apiKey = "801d3276710442a5830455e153a24b1f";
@@ -65,6 +54,10 @@ getData();*/
 //Police
 function handleFormSubmit(event) {
   event.preventDefault();
+
+  // Clear previous markers
+  markersLayer.clearLayers();
+
   const formData = new FormData(myForm);
   const formObject = Object.fromEntries(formData);
 
@@ -72,8 +65,7 @@ function handleFormSubmit(event) {
   const newLongitude = parseFloat(formObject.longitude);
   const newDate = formObject.date;
 
-  const url =
-    "https://data.police.uk/api/crimes-street/all-crime?lat=52.629729&lng=-1.131592&date=2023-01";
+  const url = `https://data.police.uk/api/crimes-street/all-crime?lat=${newLatitude}&lng=${newLongitude}&date=${newDate}`;
   const request = new Request(url);
 
   async function getData() {
@@ -82,6 +74,15 @@ function handleFormSubmit(event) {
       const data = await response.json();
       if (response.status === 200) {
         console.log("Success", data);
+        for (let i = 0; i < 500; i++) {
+          var marker = L.marker([
+            data[i].location.latitude,
+            data[i].location.longitude,
+          ]);
+          const popupContent = data[i].category;
+          marker.bindPopup(popupContent);
+          markersLayer.addLayer(marker);
+        }
       } else {
         console.log("Server Error", data.error);
       }
@@ -92,7 +93,15 @@ function handleFormSubmit(event) {
   getData();
 }
 
-function updateMap(varLatitude, varLongitude) {
-  map.setView([varLatitude, varLongitude], 13);
-  console.log(`Updating map`);
-}
+//Button to recenter map
+const centerButton = document.getElementById("center");
+
+centerButton.addEventListener("click", () => {
+  // Get the center coordinates of the map
+  const mapCenter = map.getCenter();
+  
+  // Update the latitude and longitude input fields with the map's center coordinates
+  document.getElementById("latitude").value = mapCenter.lat.toFixed(6);
+  document.getElementById("longitude").value = mapCenter.lng.toFixed(6);
+
+});

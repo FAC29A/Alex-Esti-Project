@@ -40,19 +40,31 @@
   </head>
   <body>
     <h1>Artist Compass</h1>
-   
-      <form>
-        <label for="latitude">Latitude</label>
-        <input id="latitude" name="latitude" type="search" required value="51.558480" />
-        <label for="Longitude">Longitude</label>
-        <input id="longitude" name="longitude" type="search" required value="-0.113370"/>
-        <input id="date" name="date" type="search" required value="2023-10"/>
-        <button type="submit">Search</button>
-        <output></output>
-      </form>
 
+    <form>
+      <label for="latitude">Latitude</label>
+      <input
+        id="latitude"
+        name="latitude"
+        type="search"
+        required
+        value="51.558480"
+      />
+      <label for="Longitude">Longitude</label>
+      <input
+        id="longitude"
+        name="longitude"
+        type="search"
+        required
+        value="-0.113370"
+      />
+      <input id="date" name="date" type="search" required value="2023-08" />
+      <button type="submit">Search</button>
+      <output></output>
+    </form>
+    <button id="center">Center</button>
+    
     <div id="map"></div>
-
 
     <script src="scripts/scripts.js"></script>
   </body>
