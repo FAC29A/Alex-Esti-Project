@@ -24,8 +24,34 @@
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
     <meta name="msapplication-TileColor" content="#da532c" />
     <meta name="theme-color" content="#ffffff" />
+    <!--Leaflet Api-->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
   </head>
   <body>
     <h1>Artist Compass</h1>
+   
+      <form>
+        <label for="latitude">Latitude</label>
+        <input id="latitude" name="latitude" type="search" required value="51.558480" />
+        <label for="Longitude">Longitude</label>
+        <input id="longitude" name="longitude" type="search" required value="-0.113370"/>
+        <button type="submit">Search</button>
+        <output></output>
+      </form>
+
+    <div id="map"></div>
+    <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="scripts/scripts.js"></script>
   </body>
 </html>

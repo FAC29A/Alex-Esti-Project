@@ -18,7 +18,8 @@
     --box-shadow-dark: 0 0 1.25rem rgba(0,0,0,0.8);
     --box-shadow-small: 0 0 0.75rem rgba(0,0,0,0.4);
 } 
-
+#map { height: 80vh;
+        width:100vw;}
 
 /*Media Query for phones */
 @media (max-width: 767px) { }
