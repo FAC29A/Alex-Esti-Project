@@ -1,9 +1,9 @@
 //data.js
 
 crimes = [
-  { url: "all-crime", name: "All crime" },
+  { url: "all-crime", name: "All crime", image: "" },
   { url: "anti-social-behaviour", name: "Anti-social behaviour" },
-  { url: "bicycle-theft", name: "Bicycle theft" },
+  { url: "bicycle-theft", name: "Bicycle theft", image: "" },
   { url: "burglary", name: "Burglary" },
   { url: "criminal-damage-arson", name: "Criminal damage and arson" },
   { url: "drugs", name: "Drugs" },
