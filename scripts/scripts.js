@@ -4,11 +4,29 @@ const myForm = document.querySelector("form");
 const mapElement = document.getElementById("map");
 let map; // Declare the map variable outside of the functions
 let markersLayer; // Declare a variable to store markers layer
+let currentPolygon = null; // This will hold the reference to the drawn polygon
 
 document.addEventListener("DOMContentLoaded", function () {
   // Wait for the DOM to be ready
   initializeMap();
   myForm.addEventListener("submit", handleFormSubmit);
+
+  const postcodeForm = document.forms.postcodeForm;
+  const postcodeInput = document.getElementById("postcode");
+
+  postcodeForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    const postcode = postcodeInput.value.trim();
+    if (postcode) {
+      const coords = await getPostcodeCoordinates(postcode);
+      if (coords) {
+        map.setView([coords.latitude, coords.longitude], 13);
+        fetchAndDrawBoundaryPostcode(postcode);
+        latitude = coords.latitude;
+        longitude = coords.longitude;
+      }
+    }
+  });
 });
 
 function initializeMap() {
@@ -30,6 +48,8 @@ function initializeMap() {
     // Update the latitude and longitude input fields with the map's center coordinates
     document.getElementById("latitude").value = mapCenter.lat.toFixed(6);
     document.getElementById("longitude").value = mapCenter.lng.toFixed(6);
+    latitude = mapCenter.lat.toFixed(6);
+    longitude = mapCenter.lng.toFixed(6);
   });
 }
 
@@ -72,24 +92,20 @@ function handleFormSubmit(event) {
       console.log("Fetch Error", error);
     }
   }
+  fetchAndDrawBoundaryCoordinates(newLatitude, newLongitude);
   getData();
 }
 
-/*//News
-const apiKey = "801d3276710442a5830455e153a24b1f";
-const url =
-  "https://newsapi.org/v2/everything?q=tesla&from=2023-10-14&sortBy=publishedAt&apiKey=";
-const completeUrl = url + apiKey;
-console.log(completeUrl);
-
-const request = new Request(completeUrl);
-
-async function getData() {
+//Postcodes
+async function getPostcodeCoordinates(postcode) {
+  const url = `https://api.postcodes.io/postcodes/${postcode}`;
   try {
-    const response = await fetch(request);
+    const response = await fetch(url);
     const data = await response.json();
-    if (response.status === 200) {
-      console.log("Success", data);
+    if (response.status === 200 && data.result) {
+      const { latitude, longitude } = data.result;
+      console.log("Postcode coordinates:", latitude, longitude);
+      return { latitude, longitude };
     } else {
       console.log("Server Error", data.error);
     }
@@ -97,4 +113,61 @@ async function getData() {
     console.log("Fetch Error", error);
   }
 }
-getData();*/
+
+//We need to do it in two steps
+async function fetchAndDrawBoundaryPostcode(postcode) {
+  // Step 1: Fetch the coordinates for the given postcode
+  const coords = await getPostcodeCoordinates(postcode);
+  if (!coords) {
+    console.log("Could not fetch coordinates for postcode:", postcode);
+    return;
+  }
+  fetchAndDrawBoundaryCoordinates(coords.latitude, coords.longitude);
+}
+
+async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
+  // Step 2: Fetch the police force and neighborhood ID using the coordinates
+  const forceAndNeighbourhoodUrl = `https://data.police.uk/api/locate-neighbourhood?q=${myLatitude},${myLongitude}`;
+  let forceId, neighbourhoodId;
+
+  try {
+    const response = await fetch(forceAndNeighbourhoodUrl);
+    const data = await response.json();
+    if (response.status === 200 && data) {
+      forceId = data.force;
+      neighbourhoodId = data.neighbourhood;
+    } else {
+      console.log("Error fetching force and neighbourhood:", data.error);
+      return;
+    }
+  } catch (error) {
+    console.log("Fetch Error", error);
+    return;
+  }
+
+  // Step 3: Use the police force and neighborhood ID to fetch the boundary
+  const boundaryUrl = `https://data.police.uk/api/${forceId}/${neighbourhoodId}/boundary`;
+  try {
+    const boundaryResponse = await fetch(boundaryUrl);
+    const boundaryData = await boundaryResponse.json();
+
+    if (boundaryResponse.status === 200 && Array.isArray(boundaryData)) {
+      const leafletCoords = boundaryData.map((coord) => [
+        parseFloat(coord.latitude),
+        parseFloat(coord.longitude),
+      ]);
+
+      // Remove the previously drawn polygon if it exists
+      if (currentPolygon) {
+        map.removeLayer(currentPolygon);
+      }
+
+      // Draw the new polygon and assign it to currentPolygon
+      currentPolygon = L.polygon(leafletCoords).addTo(map);
+    } else {
+      console.log("Unexpected data structure:", boundaryData);
+    }
+  } catch (error) {
+    console.log("Fetch Error", error);
+  }
+}

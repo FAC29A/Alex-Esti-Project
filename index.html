@@ -57,7 +57,7 @@
         required
         value="51.558480"
       />
-      <label for="Longitude">Longitude</label>
+      <label for="longitude">Longitude</label>
       <input
         id="longitude"
         name="longitude"
@@ -65,9 +65,15 @@
         required
         value="-0.113370"
       />
-      <input type="month" id="month" name="month">
+      <input type="month" id="month" name="month" value="2023-08" />
       <button type="submit">Search</button>
       <output></output>
+    </form>
+
+    <form name="postcodeForm">
+      <label for="postcode">Postcode</label>
+      <input id="postcode" name="postcode" type="text" value="N77NE" />
+      <button id="postcodeButton" type="submit">Locate Postcode</button>
     </form>
 
     <div id="map"></div>
