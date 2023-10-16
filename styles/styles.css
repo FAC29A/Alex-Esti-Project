@@ -12,6 +12,7 @@
     --burgundy: rgba(87,10,10,0.75);
 
     --font-titles:'Roboto', sans-serif;
+    --font-titles:'Playfair Display', serif;
     --font-main: 'Roboto', sans-serif;
 
     --box-shadow-light: 0 0 1.25rem rgba(0,0,0,0.58);
@@ -19,7 +20,8 @@
     --box-shadow-small: 0 0 0.75rem rgba(0,0,0,0.4);
 } 
 
-h1 {font-family: var(--font-titles);}
+h1 {font-family: var(--font-titles);
+    font-size: calc(18px + 4vw)}
 
 #map { height: 80vh;
         width:100vw;}
