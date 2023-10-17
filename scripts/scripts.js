@@ -7,6 +7,9 @@ let markersLayer; // Declare a variable to store markers layer
 let currentPolygon = null; // This will hold the reference to the drawn polygon
 let selectedDate;
 
+// A dictionary to hold each crime category's layer group
+const crimeLayers = {};
+
 document.addEventListener("DOMContentLoaded", function () {
   // Wait for the DOM to be ready
   initializeMap();
@@ -34,15 +37,38 @@ function initializeMap() {
   // Initialize the map at the beginning
   map = L.map("map").setView([latitude, longitude], 13);
 
-  // Add the OpenStreetMap tile layer
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution:
-      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-  }).addTo(map);
+ 
 
+  
   // Initialize a layer group for markers
-  markersLayer = L.layerGroup().addTo(map);
+  //markersLayer = L.layerGroup().addTo(map);
+   // Initialize a layer group for each crime category //XXXXXXXXXXXX Initialize crime layers
+  /* crimes.forEach(crime => {
+   crimeLayers[crime.url] = L.layerGroup().addTo(map);
+  });*/
+crimeLayers["all-crime"] = L.layerGroup().addTo(map);
+crimeLayers["anti-social-behaviour"] = L.layerGroup().addTo(map);
+crimeLayers["bicycle-theft"] = L.layerGroup().addTo(map);
+crimeLayers["burglary"] = L.layerGroup().addTo(map);
+crimeLayers["criminal-damage-arson"] = L.layerGroup().addTo(map);
+crimeLayers["drugs"] = L.layerGroup().addTo(map);
+crimeLayers["other-theft"] = L.layerGroup().addTo(map);
+crimeLayers["possession-of-weapons"] = L.layerGroup().addTo(map);
+crimeLayers["public-order"] = L.layerGroup().addTo(map);
+crimeLayers["robbery"] = L.layerGroup().addTo(map);
+crimeLayers["shoplifting"] = L.layerGroup().addTo(map);
+crimeLayers["theft-from-the-person"] = L.layerGroup().addTo(map);
+crimeLayers["vehicle-crime"] = L.layerGroup().addTo(map);
+crimeLayers["violent-crime"] = L.layerGroup().addTo(map);
+crimeLayers["other-crime"] = L.layerGroup().addTo(map);
+
+var overlayMaps = crimeLayers;
+var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
+
+// Add the OpenStreetMap tile layer
+osm.addTo(map);
+
+
 
   // Update the latitude and longitude input fields with the map's center coordinates
   map.addEventListener("move", () => {
@@ -63,6 +89,7 @@ function initializeMap() {
   });
   //We draw the area with the default coordinates
   fetchAndDrawBoundaryCoordinates(latitude, longitude);
+
 }
 
 //Get and draw placeholder crimes
@@ -70,7 +97,7 @@ function handleFormSubmit(event) {
   event.preventDefault();
 
   // Clear previous markers
-  markersLayer.clearLayers();
+  //markersLayer.clearLayers();
 
   const formData = new FormData(myForm);
   const formObject = Object.fromEntries(formData);
@@ -94,8 +121,11 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
     if (response.status === 200) {
       console.log("Success", data);
 
-      //for (let i = 0; i < data.length; i++) {
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < data.length; i++) {
+     // for (let i = 0; i < 20; i++) {
+
+        
+        const crimeCategory = data[i].category;
         const crimeLocation = {
           latitude: parseFloat(data[i].location.latitude),
           longitude: parseFloat(data[i].location.longitude),
@@ -109,7 +139,11 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
           const popupContent = data[i].category;
 
           marker.bindPopup(popupContent);
-          markersLayer.addLayer(marker);
+
+          // Add the marker to the appropriate layer group based on the crime category
+          if (crimeLayers[crimeCategory]) {
+            crimeLayers[crimeCategory].addLayer(marker);
+          }
         }
 
         /* Version to print all the crimes no matter the region
@@ -257,3 +291,51 @@ function isLocationInsidePolygon(polygon, location) {
 
   return inside;
 }
+
+// Define the OpenStreetMap tile layer
+var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+});
+
+// Define the OpenStreetMap.HOT tile layer (if you want to use it)
+var osmHOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles style by <a href="https://www.hotosm.org/" target="_blank">HOT</a>'
+});
+
+
+
+var baseMaps = {
+  "OpenStreetMap": osm,
+  "OpenStreetMap.HOT": osmHOT
+};
+
+/*// Add all the crime layers to the overlays //XXXXXXXXXXXX Extend the overlays to include crime layers
+var overlayMaps = {
+  ...Object.fromEntries(crimes.map(crime => [crime.name, crimeLayers[crime.url]]))
+};*/
+
+
+
+
+/*const keyValuePairs = crimes.map(crime => [crime.name, crimeLayers[crime.url]]);
+console.log(keyValuePairs);*/
+/*const keyValuePairs = crimes.map(crime => {
+  let layerGroup = crimeLayers[crime.url];
+
+  if (!layerGroup) {
+      console.warn(`Missing layer for crime category: ${crime.name}. Creating a new one.`);
+      layerGroup = L.layerGroup().addTo(map);
+      crimeLayers[crime.url] = layerGroup; // Add the new layer to crimeLayers
+  }
+  
+  return [crime.name, layerGroup];
+});
+*/
+
+//const overlayMaps = Object.fromEntries(keyValuePairs);
+/*var overlayMaps = crimeLayers;
+console.log('Base Maps:', baseMaps);
+console.log('Overlay Maps:', overlayMaps);
+var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);*/
