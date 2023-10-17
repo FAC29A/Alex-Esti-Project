@@ -53,7 +53,7 @@ function initializeMap() {
   });
 }
 
-//Police
+//Get and draw placeholder crimes
 function handleFormSubmit(event) {
   event.preventDefault();
 
@@ -68,22 +68,43 @@ function handleFormSubmit(event) {
   const newDate = formObject.date;
 
   const url = `https://data.police.uk/api/crimes-street/all-crime?lat=${newLatitude}&lng=${newLongitude}&date=${newDate}`;
+  //const url = `https://data.police.uk/api/crimes-street/all-crime?poly=${newPoligon}&date=${newDate}`;
+
   const request = new Request(url);
 
-  async function getData() {
+  async function getCrimes() {
     try {
       const response = await fetch(request);
       const data = await response.json();
       if (response.status === 200) {
         console.log("Success", data);
-        for (let i = 0; i < 400; i++) {
+
+        for (let i = 0; i < data.length; i++) {
+          const crimeLocation = {
+            latitude: parseFloat(data[i].location.latitude),
+            longitude: parseFloat(data[i].location.longitude),
+          };
+          // Only add the marker if the crime's location is inside the currentPolygon
+          if (isLocationInsidePolygon(currentPolygon, crimeLocation)) {
+            const marker = L.marker([
+              crimeLocation.latitude,
+              crimeLocation.longitude,
+            ]);
+            const popupContent = data[i].category;
+            
+            marker.bindPopup(popupContent);
+            markersLayer.addLayer(marker);
+          }
+
+          /*
           var marker = L.marker([
+            
             data[i].location.latitude,
-            data[i].location.longitude,
+            data[i].location.longitude
           ]);
           const popupContent = data[i].category;
           marker.bindPopup(popupContent);
-          markersLayer.addLayer(marker);
+          markersLayer.addLayer(marker);*/
         }
       } else {
         console.log("Server Error", data.error);
@@ -93,7 +114,7 @@ function handleFormSubmit(event) {
     }
   }
   fetchAndDrawBoundaryCoordinates(newLatitude, newLongitude);
-  getData();
+  getCrimes();
 }
 
 //Postcodes
@@ -170,4 +191,10 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
   } catch (error) {
     console.log("Fetch Error", error);
   }
+}
+
+//Function to check if a location is inside a polygon
+function isLocationInsidePolygon(polygon, location) {
+  const latlng = new L.LatLng(location.latitude, location.longitude);
+  return polygon.contains(latlng);
 }
