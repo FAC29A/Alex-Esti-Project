@@ -21,7 +21,20 @@
 } 
 
 h1 {font-family: var(--font-titles);
-    font-size: calc(18px + 4vw)}
+    font-size: calc(18px + 4vw);
+    margin: 1vw 0}
+
+#neighbourhood {position: absolute;
+    font-family: var(--font-titles);
+    font-size: calc(18px + 4vw);
+    margin-top: 0;
+    padding: 0 2vw;
+    top: 2%;
+    left: 50%;
+    transform: translate(-50%, 0);z-index: 1000; /* To ensure the h2 is always on top */
+    background-color: rgba(255, 255, 255, 0.7); /* Optional: To make the text more readable against the map background */
+    border-radius: 5px; /* Optional: To round the corners of the background */
+}
 
 #map { height: 80vh;
         width:100vw;
@@ -36,7 +49,7 @@ h1 {font-family: var(--font-titles);
     background-color: transparent;
     pointer-events: none; /* Makes the crosshair non-interactive */
     transform: translate(-50%, -50%); /* This will center the crosshair */
-    z-index: 1000;
+    z-index: 999;
 }
 
 #mapCrosshair::before,
@@ -61,6 +74,8 @@ h1 {font-family: var(--font-titles);
     height: 100%;
     transform: translateX(-50%);
 }
+
+
         
 
 /*Media Query for phones */

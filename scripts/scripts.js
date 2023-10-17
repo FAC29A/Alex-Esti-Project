@@ -228,7 +228,7 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
     return;
   }
 
-  // Step 3: Use the police force and neighborhood ID to fetch the boundary
+  //Use the police force and neighborhood ID to fetch the boundary
   const boundaryUrl = `https://data.police.uk/api/${forceId}/${neighbourhoodId}/boundary`;
   try {
     const boundaryResponse = await fetch(boundaryUrl);
@@ -247,6 +247,8 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
 
       // Draw the new polygon and assign it to currentPolygon
       currentPolygon = L.polygon(leafletCoords).addTo(map);
+
+
     } else {
       console.log("Unexpected data structure:", boundaryData);
     }
