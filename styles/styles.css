@@ -24,7 +24,50 @@ h1 {font-family: var(--font-titles);
     font-size: calc(18px + 4vw)}
 
 #map { height: 80vh;
-        width:100vw;}
+        width:100vw;
+        position: relative;}
+
+#mapCrosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6vw;
+    height: 6vw;
+    background-color: transparent;
+    pointer-events: none; /* Makes the crosshair non-interactive */
+    transform: translate(-50%, -50%); /* This will center the crosshair */
+    z-index: 1000;
+}
+
+#mapCrosshair::before,
+#mapCrosshair::after {
+    content: '';
+    position: absolute;
+    background-color: black;
+}
+
+#mapCrosshair::before {
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    transform: translateY(-50%);
+}
+
+#mapCrosshair::after {
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    transform: translateX(-50%);
+}
+        
+
+       
+        
+        
+        
+        
 
 /*Media Query for phones */
 @media (max-width: 767px) { }
