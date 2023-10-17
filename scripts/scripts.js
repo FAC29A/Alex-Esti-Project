@@ -43,14 +43,23 @@ function initializeMap() {
   // Initialize a layer group for markers
   markersLayer = L.layerGroup().addTo(map);
 
+  // Update the latitude and longitude input fields with the map's center coordinates
   map.addEventListener("move", () => {
     const mapCenter = map.getCenter();
-    // Update the latitude and longitude input fields with the map's center coordinates
     document.getElementById("latitude").value = mapCenter.lat.toFixed(6);
     document.getElementById("longitude").value = mapCenter.lng.toFixed(6);
     latitude = mapCenter.lat.toFixed(6);
     longitude = mapCenter.lng.toFixed(6);
   });
+
+  map.addEventListener("moveend", () => {
+    const mapCenter = map.getCenter();
+    // Update the latitude and longitude input fields with the map's center coordinates
+    latitude = mapCenter.lat.toFixed(6);
+    longitude = mapCenter.lng.toFixed(6);
+    fetchAndDrawBoundaryCoordinates(latitude, longitude);
+  }); 
+
 }
 
 //Get and draw placeholder crimes
@@ -68,7 +77,6 @@ function handleFormSubmit(event) {
   const newDate = formObject.date;
 
   const url = `https://data.police.uk/api/crimes-street/all-crime?lat=${newLatitude}&lng=${newLongitude}&date=${newDate}`;
-  //const url = `https://data.police.uk/api/crimes-street/all-crime?poly=${newPoligon}&date=${newDate}`;
 
   const request = new Request(url);
 
@@ -91,12 +99,12 @@ function handleFormSubmit(event) {
               crimeLocation.longitude,
             ]);
             const popupContent = data[i].category;
-            
+
             marker.bindPopup(popupContent);
             markersLayer.addLayer(marker);
           }
 
-          /*
+          /* Version to print all the crimes no matter the region
           var marker = L.marker([
             
             data[i].location.latitude,
@@ -105,6 +113,7 @@ function handleFormSubmit(event) {
           const popupContent = data[i].category;
           marker.bindPopup(popupContent);
           markersLayer.addLayer(marker);*/
+
         }
       } else {
         console.log("Server Error", data.error);
@@ -117,7 +126,7 @@ function handleFormSubmit(event) {
   getCrimes();
 }
 
-//Postcodes
+//Get coordinates from Postcodes
 async function getPostcodeCoordinates(postcode) {
   const url = `https://api.postcodes.io/postcodes/${postcode}`;
   try {
@@ -135,7 +144,7 @@ async function getPostcodeCoordinates(postcode) {
   }
 }
 
-//We need to do it in two steps
+//Draw regions using a postcode
 async function fetchAndDrawBoundaryPostcode(postcode) {
   // Step 1: Fetch the coordinates for the given postcode
   const coords = await getPostcodeCoordinates(postcode);
@@ -146,6 +155,7 @@ async function fetchAndDrawBoundaryPostcode(postcode) {
   fetchAndDrawBoundaryCoordinates(coords.latitude, coords.longitude);
 }
 
+//Draw regions using latitude and longiute
 async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
   // Step 2: Fetch the police force and neighborhood ID using the coordinates
   const forceAndNeighbourhoodUrl = `https://data.police.uk/api/locate-neighbourhood?q=${myLatitude},${myLongitude}`;
@@ -195,6 +205,21 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
 
 //Function to check if a location is inside a polygon
 function isLocationInsidePolygon(polygon, location) {
-  const latlng = new L.LatLng(location.latitude, location.longitude);
-  return polygon.contains(latlng);
+  let latlngs = polygon.getLatLngs()[0];
+  let x = location.latitude,
+    y = location.longitude;
+
+  let inside = false;
+  for (let i = 0, j = latlngs.length - 1; i < latlngs.length; j = i++) {
+    let xi = latlngs[i].lat,
+      yi = latlngs[i].lng;
+    let xj = latlngs[j].lat,
+      yj = latlngs[j].lng;
+
+    let intersect =
+      yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+    if (intersect) inside = !inside;
+  }
+
+  return inside;
 }
