@@ -1,5 +1,5 @@
-let latitude = 51.55848;
-let longitude = -0.11337;
+let latitude = 51.506533;
+let longitude = -0.15398;
 const myForm = document.querySelector("form");
 const mapElement = document.getElementById("map");
 let map; // Declare the map variable outside of the functions
