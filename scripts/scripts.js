@@ -7,6 +7,7 @@ let map; // Declare the map variable outside of the functions
 let markersLayer; // Declare a variable to store markers layer
 let currentPolygon = null; // This will hold the reference to the drawn polygon
 let selectedDate;
+let currentNeighbourhoodId = null;
 
 // A dictionary to hold each crime category's layer group
 const crimeLayers = {};
@@ -36,11 +37,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function initializeMap() {
   // Initialize the map at the beginning
-  map = L.map("map").setView([latitude, longitude], 13);
+  map = L.map("map").setView([latitude, longitude], 15);
 
   // Initialize a layer group for each crime category
-  crimes.forEach(crime => {
-   crimeLayers[crime.url] = L.layerGroup().addTo(map);
+  crimes.forEach((crime) => {
+    crimeLayers[crime.url] = L.layerGroup().addTo(map);
   });
 
   var overlayMaps = crimeLayers;
@@ -52,11 +53,9 @@ function initializeMap() {
   //We draw the area with the default coordinates
   fetchAndDrawBoundaryCoordinates(latitude, longitude);
 
-  // Update the latitude and longitude input fields with the map's center coordinates
+  // Update the latitude and longitude values with the map's center coordinates
   map.addEventListener("move", () => {
     const mapCenter = map.getCenter();
-    document.getElementById("latitude").value = mapCenter.lat.toFixed(6);
-    document.getElementById("longitude").value = mapCenter.lng.toFixed(6);
     latitude = mapCenter.lat.toFixed(6);
     longitude = mapCenter.lng.toFixed(6);
   });
@@ -78,12 +77,9 @@ function handleFormSubmit(event) {
   // Clear previous markers
   //markersLayer.clearLayers();
 
-  const formData = new FormData(myForm);
-  const formObject = Object.fromEntries(formData);
-
-  const newLatitude = parseFloat(formObject.latitude);
-  const newLongitude = parseFloat(formObject.longitude);
-  selectedDate = formObject.month;
+  const newLatitude = latitude;
+  const newLongitude = longitude;
+  selectedDate = document.getElementById("month").value;
 
   fetchAndDrawBoundaryCoordinates(newLatitude, newLongitude);
   getCrimes(newLatitude, newLongitude, selectedDate);
@@ -91,7 +87,6 @@ function handleFormSubmit(event) {
 
 //Get and draw crimes
 async function getCrimes(newLatitude, newLongitude, selectedDate) {
-
   // Start the timer
   console.time("getCrimes Timer");
 
@@ -164,7 +159,7 @@ async function getPostcodeCoordinates(postcode) {
 
 //Draw regions using a postcode
 async function fetchAndDrawBoundaryPostcode(postcode) {
-  // Step 1: Fetch the coordinates for the given postcode
+  //Fetch the coordinates for the given postcode
   const coords = await getPostcodeCoordinates(postcode);
   if (!coords) {
     console.log("Could not fetch coordinates for postcode:", postcode);
@@ -175,7 +170,7 @@ async function fetchAndDrawBoundaryPostcode(postcode) {
 
 //Draw regions using latitude and longiute
 async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
-  // Step 2: Fetch the police force and neighborhood ID using the coordinates
+  //Fetch the police force and neighborhood ID using the coordinates
   const forceAndNeighbourhoodUrl = `https://data.police.uk/api/locate-neighbourhood?q=${myLatitude},${myLongitude}`;
   let forceId, neighbourhoodId;
 
@@ -186,6 +181,13 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
     if (response.status === 200 && data) {
       forceId = data.force;
       neighbourhoodId = data.neighbourhood;
+
+      // Check if the neighbourhood is the same as before
+      if (neighbourhoodId === currentNeighbourhoodId) {
+        return; // Return early without redrawing
+      }
+      // Update the currentNeighbourhoodId
+      currentNeighbourhoodId = neighbourhoodId;
 
       // Fetch the name of the neighbourhood using the forceId and neighbourhoodId
       const neighbourhoodListUrl = `https://data.police.uk/api/${forceId}/neighbourhoods`;
