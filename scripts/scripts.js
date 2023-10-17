@@ -1,5 +1,6 @@
 let latitude = 51.506533;
 let longitude = -0.15398;
+
 const myForm = document.querySelector("form");
 const mapElement = document.getElementById("map");
 let map; // Declare the map variable outside of the functions
@@ -37,38 +38,19 @@ function initializeMap() {
   // Initialize the map at the beginning
   map = L.map("map").setView([latitude, longitude], 13);
 
- 
-
-  
-  // Initialize a layer group for markers
-  //markersLayer = L.layerGroup().addTo(map);
-   // Initialize a layer group for each crime category //XXXXXXXXXXXX Initialize crime layers
-  /* crimes.forEach(crime => {
+  // Initialize a layer group for each crime category
+  crimes.forEach(crime => {
    crimeLayers[crime.url] = L.layerGroup().addTo(map);
-  });*/
-crimeLayers["all-crime"] = L.layerGroup().addTo(map);
-crimeLayers["anti-social-behaviour"] = L.layerGroup().addTo(map);
-crimeLayers["bicycle-theft"] = L.layerGroup().addTo(map);
-crimeLayers["burglary"] = L.layerGroup().addTo(map);
-crimeLayers["criminal-damage-arson"] = L.layerGroup().addTo(map);
-crimeLayers["drugs"] = L.layerGroup().addTo(map);
-crimeLayers["other-theft"] = L.layerGroup().addTo(map);
-crimeLayers["possession-of-weapons"] = L.layerGroup().addTo(map);
-crimeLayers["public-order"] = L.layerGroup().addTo(map);
-crimeLayers["robbery"] = L.layerGroup().addTo(map);
-crimeLayers["shoplifting"] = L.layerGroup().addTo(map);
-crimeLayers["theft-from-the-person"] = L.layerGroup().addTo(map);
-crimeLayers["vehicle-crime"] = L.layerGroup().addTo(map);
-crimeLayers["violent-crime"] = L.layerGroup().addTo(map);
-crimeLayers["other-crime"] = L.layerGroup().addTo(map);
+  });
 
-var overlayMaps = crimeLayers;
-var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
+  var overlayMaps = crimeLayers;
+  var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
 
-// Add the OpenStreetMap tile layer
-osm.addTo(map);
+  // Add the OpenStreetMap tile layer
+  osm.addTo(map);
 
-
+  //We draw the area with the default coordinates
+  fetchAndDrawBoundaryCoordinates(latitude, longitude);
 
   // Update the latitude and longitude input fields with the map's center coordinates
   map.addEventListener("move", () => {
@@ -87,9 +69,6 @@ osm.addTo(map);
     fetchAndDrawBoundaryCoordinates(latitude, longitude);
     //getCrimes(latitude, longitude, selectedDate);
   });
-  //We draw the area with the default coordinates
-  fetchAndDrawBoundaryCoordinates(latitude, longitude);
-
 }
 
 //Get and draw placeholder crimes
@@ -104,7 +83,7 @@ function handleFormSubmit(event) {
 
   const newLatitude = parseFloat(formObject.latitude);
   const newLongitude = parseFloat(formObject.longitude);
-  selectedDate = formObject.date;
+  selectedDate = formObject.month;
 
   fetchAndDrawBoundaryCoordinates(newLatitude, newLongitude);
   getCrimes(newLatitude, newLongitude, selectedDate);
@@ -112,7 +91,17 @@ function handleFormSubmit(event) {
 
 //Get and draw crimes
 async function getCrimes(newLatitude, newLongitude, selectedDate) {
-  const url = `https://data.police.uk/api/crimes-street/all-crime?lat=${newLatitude}&lng=${newLongitude}&date=${selectedDate}`;
+
+  // Start the timer
+  console.time("getCrimes Timer");
+
+  // Clear previous markers from all layers
+  for (let layer in crimeLayers) {
+    crimeLayers[layer].clearLayers();
+  }
+  //const url = `https://data.police.uk/api/crimes-street/all-crime?lat=${newLatitude}&lng=${newLongitude}&date=${selectedDate}`;
+  const container = containerRectangle(currentPolygon);
+  const url = `https://data.police.uk/api/crimes-street/all-crime?poly=${container}&date=${selectedDate}`;
   const request = new Request(url);
 
   try {
@@ -122,9 +111,8 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
       console.log("Success", data);
 
       for (let i = 0; i < data.length; i++) {
-     // for (let i = 0; i < 20; i++) {
+        // for (let i = 0; i < 20; i++) {
 
-        
         const crimeCategory = data[i].category;
         const crimeLocation = {
           latitude: parseFloat(data[i].location.latitude),
@@ -145,16 +133,6 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
             crimeLayers[crimeCategory].addLayer(marker);
           }
         }
-
-        /* Version to print all the crimes no matter the region
-          var marker = L.marker([
-            
-            data[i].location.latitude,
-            data[i].location.longitude
-          ]);
-          const popupContent = data[i].category;
-          marker.bindPopup(popupContent);
-          markersLayer.addLayer(marker);*/
       }
     } else {
       console.log("Server Error", data.error);
@@ -162,6 +140,8 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
   } catch (error) {
     console.log("Fetch Error", error);
   }
+  // Stop the timer and display the elapsed time
+  console.timeEnd("getCrimes Timer");
 }
 
 //Get coordinates from Postcodes
@@ -209,27 +189,31 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
 
       // Fetch the name of the neighbourhood using the forceId and neighbourhoodId
       const neighbourhoodListUrl = `https://data.police.uk/api/${forceId}/neighbourhoods`;
-  try {
-    const neighbourhoodListResponse = await fetch(neighbourhoodListUrl);
-    const neighbourhoodList = await neighbourhoodListResponse.json();
-    if (neighbourhoodListResponse.status === 200 && neighbourhoodList.length) {
-      // Find the neighbourhood name using the neighbourhoodId
-      const matchedNeighbourhood = neighbourhoodList.find(n => n.id === neighbourhoodId);
-
-      if (matchedNeighbourhood) {
-        const neighbourhoodName = matchedNeighbourhood.name; // This gives the human-readable name
-
-        // Set the neighbourhood label
-        const neighbourhoodLabel = document.getElementById("neighbourhood");
-        neighbourhoodLabel.textContent = neighbourhoodName;
-
-        } else {
-          console.log(
-            "Error fetching neighbourhood name:",
-            neighbourhoodData.error
+      try {
+        const neighbourhoodListResponse = await fetch(neighbourhoodListUrl);
+        const neighbourhoodList = await neighbourhoodListResponse.json();
+        if (
+          neighbourhoodListResponse.status === 200 &&
+          neighbourhoodList.length
+        ) {
+          // Find the neighbourhood name using the neighbourhoodId
+          const matchedNeighbourhood = neighbourhoodList.find(
+            (n) => n.id === neighbourhoodId
           );
+
+          if (matchedNeighbourhood) {
+            const neighbourhoodName = matchedNeighbourhood.name; // This gives the human-readable name
+
+            // Set the neighbourhood label
+            const neighbourhoodLabel = document.getElementById("neighbourhood");
+            neighbourhoodLabel.textContent = neighbourhoodName;
+          } else {
+            console.log(
+              "Error fetching neighbourhood name:",
+              neighbourhoodData.error
+            );
+          }
         }
-      }
       } catch (error) {
         console.log("Fetch Error", error);
       }
@@ -241,8 +225,6 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
     console.log("Fetch Error", error);
     return;
   }
-
- 
 
   // Step 3: Use the police force and neighborhood ID to fetch the boundary
   const boundaryUrl = `https://data.police.uk/api/${forceId}/${neighbourhoodId}/boundary`;
@@ -292,50 +274,54 @@ function isLocationInsidePolygon(polygon, location) {
   return inside;
 }
 
+function containerRectangle(polygon) {
+  if (!polygon || !polygon.getLatLngs || polygon.getLatLngs().length === 0) {
+    console.warn("Invalid polygon provided to containerRectangle function.");
+    return null;
+  }
+
+  let latlngs = polygon.getLatLngs()[0];
+
+  let minLat = Infinity;
+  let maxLat = -Infinity;
+  let minLng = Infinity;
+  let maxLng = -Infinity;
+
+  latlngs.forEach((latlng) => {
+    if (latlng.lat < minLat) minLat = latlng.lat;
+    if (latlng.lat > maxLat) maxLat = latlng.lat;
+    if (latlng.lng < minLng) minLng = latlng.lng;
+    if (latlng.lng > maxLng) maxLng = latlng.lng;
+  });
+
+  // Create and return the bounding rectangle using the computed min and max values
+  return [
+    [minLat, minLng].join(","), // Bottom-left corner
+    [minLat, maxLng].join(","), // Bottom-right corner
+    [maxLat, maxLng].join(","), // Top-right corner
+    [maxLat, minLng].join(","), // Top-left corner
+    [minLat, minLng].join(","), // Close the rectangle by returning to the starting point
+  ].join(":");
+}
+
 // Define the OpenStreetMap tile layer
-var osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+var osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19,
+  attribution:
+    '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 });
 
 // Define the OpenStreetMap.HOT tile layer (if you want to use it)
-var osmHOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+var osmHOT = L.tileLayer(
+  "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+  {
     maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles style by <a href="https://www.hotosm.org/" target="_blank">HOT</a>'
-});
-
-
+    attribution:
+      '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, Tiles style by <a href="https://www.hotosm.org/" target="_blank">HOT</a>',
+  }
+);
 
 var baseMaps = {
-  "OpenStreetMap": osm,
-  "OpenStreetMap.HOT": osmHOT
+  OpenStreetMap: osm,
+  "OpenStreetMap.HOT": osmHOT,
 };
-
-/*// Add all the crime layers to the overlays //XXXXXXXXXXXX Extend the overlays to include crime layers
-var overlayMaps = {
-  ...Object.fromEntries(crimes.map(crime => [crime.name, crimeLayers[crime.url]]))
-};*/
-
-
-
-
-/*const keyValuePairs = crimes.map(crime => [crime.name, crimeLayers[crime.url]]);
-console.log(keyValuePairs);*/
-/*const keyValuePairs = crimes.map(crime => {
-  let layerGroup = crimeLayers[crime.url];
-
-  if (!layerGroup) {
-      console.warn(`Missing layer for crime category: ${crime.name}. Creating a new one.`);
-      layerGroup = L.layerGroup().addTo(map);
-      crimeLayers[crime.url] = layerGroup; // Add the new layer to crimeLayers
-  }
-  
-  return [crime.name, layerGroup];
-});
-*/
-
-//const overlayMaps = Object.fromEntries(keyValuePairs);
-/*var overlayMaps = crimeLayers;
-console.log('Base Maps:', baseMaps);
-console.log('Overlay Maps:', overlayMaps);
-var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);*/
