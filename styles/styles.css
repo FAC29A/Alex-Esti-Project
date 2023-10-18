@@ -38,9 +38,11 @@ body{margin: 0;
     overflow: hidden;
 }
 
-#map { height: 100vh;
-        width:100vw;
-        position: relative;}
+#map {
+    height: 100dvh; /* Fallback for browsers that do not support Custom Properties */
+    width: 100vw;
+    position: relative;
+}
 
 #mapCrosshair {
     position: absolute;

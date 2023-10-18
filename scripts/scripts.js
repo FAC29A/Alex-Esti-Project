@@ -208,7 +208,7 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
 
             // Set the neighbourhood label
             const neighbourhoodLabel = document.getElementById("neighbourhood");
-            neighbourhoodLabel.textContent = `Crime in :` + neighbourhoodName;
+            neighbourhoodLabel.textContent = `Crime in: ` + neighbourhoodName;
           } else {
             console.log(
               "Error fetching neighbourhood name:",
