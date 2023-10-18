@@ -38,6 +38,11 @@ body{margin: 0;
     overflow: hidden;
 }
 
+/*Style for postcode texbox */
+#postcode{
+    width: auto;
+}
+
 #map {
     height: 100svh; /* Fallback for browsers that do not support Custom Properties */
     width: 100vw;
