@@ -46,24 +46,23 @@
     ></script>
   </head>
   <body>
-    <h1>Crimes Compass</h1>
-     <!--<h2 id="neighbourhood"><h2>-->
-
-    <form>
-      <input type="month" id="month" name="month" value="2023-08" />
-      <button type="submit">Search Crime</button>
-      <output></output>
-    </form>
-
-    <form name="postcodeForm">
-      <label for="postcode">Postcode</label>
-      <input id="postcode" name="postcode" type="text" value="N77NE" />
-      <button id="postcodeButton" type="submit">Locate Postcode</button>
-    </form>
-
     <div id="map">
-      <h2 id="neighbourhood"></h2>
+      <h1 id="neighbourhood">Crime in UK</h1>
       <div id="mapCrosshair"></div>
+
+      <div id="controls">
+        <form>
+          <input type="month" id="month" name="month" value="2023-08" />
+          <button type="submit">Search Crime</button>
+          <output></output>
+        </form>
+  
+        <form name="postcodeForm">
+          <input id="postcode" name="postcode" type="text" value="N77NE" />
+          <button id="postcodeButton" type="submit">Locate Postcode</button>
+        </form>
+      </div>
+
     </div>
 
     <script src="scripts/data.js"></script>
