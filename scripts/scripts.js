@@ -8,6 +8,10 @@ let currentPolygon = null; // This will hold the reference to the drawn polygon
 let selectedDate;
 let currentNeighbourhoodId = null;
 
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+const BASE_IMAGE_PATH = "./images/placeholders/";
+const DEFAULT_MARKER_IMAGE = BASE_IMAGE_PATH + "generic.png";
+
 // A dictionary to hold each crime category's layer group
 const crimeLayers = {};
 
@@ -92,7 +96,7 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
   for (let layer in crimeLayers) {
     crimeLayers[layer].clearLayers();
   }
-  //const url = `https://data.police.uk/api/crimes-street/all-crime?lat=${newLatitude}&lng=${newLongitude}&date=${selectedDate}`;
+
   const container = containerRectangle(currentPolygon);
   const url = `https://data.police.uk/api/crimes-street/all-crime?poly=${container}&date=${selectedDate}`;
   const request = new Request(url);
@@ -111,12 +115,29 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
           latitude: parseFloat(data[i].location.latitude),
           longitude: parseFloat(data[i].location.longitude),
         };
+
+        //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        //Code for placeholders
+        const crimeData = crimes.find((c) => c.url === crimeCategory);
+        const imageUrl =
+          crimeData && crimeData.placeholder
+            ? BASE_IMAGE_PATH + crimeData.placeholder
+            : DEFAULT_MARKER_IMAGE;
+
+        const customIcon = L.icon({
+          iconUrl: imageUrl,
+          iconSize: [18, 25],
+          iconAnchor: [12.5, 12.5],
+          popupAnchor: [0, -10],
+        });
+
         // Only add the marker if the crime's location is inside the currentPolygon
         if (isLocationInsidePolygon(currentPolygon, crimeLocation)) {
-          const marker = L.marker([
-            crimeLocation.latitude,
-            crimeLocation.longitude,
-          ]);
+          const marker = L.marker(
+            [crimeLocation.latitude, crimeLocation.longitude],
+            { icon: customIcon }
+          );
+
           const popupContent = data[i].category;
 
           marker.bindPopup(popupContent);
