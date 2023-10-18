@@ -62,7 +62,7 @@ function initializeMap() {
   var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
 
   // Add the OpenStreetMap tile layer
-  osm.addTo(map);
+  osmHOT.addTo(map);
 
   //We draw the area with the default coordinates
   fetchAndDrawBoundaryCoordinates(latitude, longitude);
@@ -96,8 +96,8 @@ function handleFormSubmit() {
 
 //This function will offset randomly the crimes so they dont pile up
 function addRandomOffset(coordinate) {
-  const MAX_OFFSET = 0.0005;  // This determines the maximum distance away from the original point
-  const offset = (Math.random() - 0.5) * 2 * MAX_OFFSET;  // Random value between -MAX_OFFSET and MAX_OFFSET
+  const MAX_OFFSET = 0.0005; // This determines the maximum distance away from the original point
+  const offset = (Math.random() - 0.5) * 2 * MAX_OFFSET; // Random value between -MAX_OFFSET and MAX_OFFSET
   return coordinate + offset;
 }
 
