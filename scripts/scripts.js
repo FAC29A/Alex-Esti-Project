@@ -5,8 +5,9 @@ const mapElement = document.getElementById("map");
 let map; // Declare the map variable outside of the functions
 let markersLayer; // Declare a variable to store markers layer
 let currentPolygon = null; // This will hold the reference to the drawn polygon
-let selectedDate;
+let selectedDate = "2023-08";
 let currentNeighbourhoodId = null;
+let zoomLevel = 15;
 
 const BASE_IMAGE_PATH = "./images/placeholders/";
 const DEFAULT_MARKER_IMAGE = BASE_IMAGE_PATH + "generic.png";
@@ -29,10 +30,13 @@ document.addEventListener("DOMContentLoaded", function () {
     if (postcode) {
       const coords = await getPostcodeCoordinates(postcode);
       if (coords) {
-        map.setView([coords.latitude, coords.longitude], 15);
-        fetchAndDrawBoundaryPostcode(postcode);
         latitude = coords.latitude;
         longitude = coords.longitude;
+        map.setView([latitude, longitude], zoomLevel);
+        //await fetchAndDrawBoundaryPostcode(postcode);
+        await fetchAndDrawBoundaryCoordinates(latitude, longitude);
+        //Not working
+        getCrimes(selectedDate, currentPolygon);
       }
     }
   });
@@ -40,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function initializeMap() {
   // Initialize the map at the beginning
-  map = L.map("map").setView([latitude, longitude], 15);
+  map = L.map("map").setView([latitude, longitude], zoomLevel);
 
   // Initialize a layer group for each crime category
   crimes.forEach((crime) => {
@@ -91,7 +95,7 @@ function handleFormSubmit() {
   selectedDate = document.getElementById("month").value;
 
   fetchAndDrawBoundaryCoordinates(newLatitude, newLongitude);
-  getCrimes(newLatitude, newLongitude, selectedDate);
+  getCrimes(selectedDate, currentPolygon);
 }
 
 //This function will offset randomly the crimes so they dont pile up
@@ -102,8 +106,9 @@ function addRandomOffset(coordinate) {
 }
 
 //Get and draw crimes
-async function getCrimes(newLatitude, newLongitude, selectedDate) {
+async function getCrimes(newDate, newPoligon) {
   // Start the timer
+
   console.time("getCrimes Timer");
 
   // Clear previous markers from all layers
@@ -111,8 +116,8 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
     crimeLayers[layer].clearLayers();
   }
 
-  const container = containerRectangle(currentPolygon);
-  const url = `https://data.police.uk/api/crimes-street/all-crime?poly=${container}&date=${selectedDate}`;
+  const container = containerRectangle(newPoligon);
+  const url = `https://data.police.uk/api/crimes-street/all-crime?poly=${container}&date=${newDate}`;
   const request = new Request(url);
 
   try {
@@ -151,22 +156,22 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
         });
 
         // Only add the marker if the crime's location is inside the currentPolygon
-        if (isLocationInsidePolygon(currentPolygon, crimeLocation)) {
-          const marker = L.marker(
-            [crimeLocation.latitude, crimeLocation.longitude],
-            { icon: customIcon }
-          );
+        // if (isLocationInsidePolygon(currentPolygon, crimeLocation)) {
+        const marker = L.marker(
+          [crimeLocation.latitude, crimeLocation.longitude],
+          { icon: customIcon }
+        );
 
-          const popupContent =
-            crimeData && crimeData.name ? crimeData.name : data[i].category;
+        const popupContent =
+          crimeData && crimeData.name ? crimeData.name : data[i].category;
 
-          marker.bindPopup(popupContent);
+        marker.bindPopup(popupContent);
 
-          // Add the marker to the appropriate layer group based on the crime category
-          if (crimeLayers[crimeCategory]) {
-            crimeLayers[crimeCategory].addLayer(marker);
-          }
+        // Add the marker to the appropriate layer group based on the crime category
+        if (crimeLayers[crimeCategory]) {
+          crimeLayers[crimeCategory].addLayer(marker);
         }
+        //}
       }
     } else {
       console.log("Server Error", data.error);
@@ -195,7 +200,7 @@ async function getPostcodeCoordinates(postcode) {
     console.log("Fetch Error", error);
   }
 }
-
+/*
 //Draw regions using a postcode
 async function fetchAndDrawBoundaryPostcode(postcode) {
   //Fetch the coordinates for the given postcode
@@ -205,7 +210,7 @@ async function fetchAndDrawBoundaryPostcode(postcode) {
     return;
   }
   fetchAndDrawBoundaryCoordinates(coords.latitude, coords.longitude);
-}
+}*/
 
 //Draw regions using latitude and longiute
 async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
@@ -285,6 +290,7 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
       }
 
       // Draw the new polygon and assign it to currentPolygon
+      console.log(`Updating polygon`);
       currentPolygon = L.polygon(leafletCoords).addTo(map);
     } else {
       console.log("Unexpected data structure:", boundaryData);
