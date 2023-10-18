@@ -50,14 +50,14 @@ function initializeMap() {
   var overlayMaps = {};
 
   // Construct overlayMaps without "all-crime" and use the crime's name instead of its URL
-Object.keys(crimeLayers).forEach((key) => {
-  if (key !== "all-crime") {
-    const crimeData = crimes.find((c) => c.url === key);
-    if (crimeData && crimeData.name) {
-      overlayMaps[crimeData.name] = crimeLayers[key]; // use the crime's name
+  Object.keys(crimeLayers).forEach((key) => {
+    if (key !== "all-crime") {
+      const crimeData = crimes.find((c) => c.url === key);
+      if (crimeData && crimeData.name) {
+        overlayMaps[crimeData.name] = crimeLayers[key]; // use the crime's name
+      }
     }
-  }
-});
+  });
 
   var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
 
@@ -86,7 +86,6 @@ Object.keys(crimeLayers).forEach((key) => {
 
 //Get and draw placeholder crimes
 function handleFormSubmit() {
-
   const newLatitude = latitude;
   const newLongitude = longitude;
   selectedDate = document.getElementById("month").value;
@@ -145,7 +144,8 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
             { icon: customIcon }
           );
 
-          const popupContent = data[i].category;
+          const popupContent =
+            crimeData && crimeData.name ? crimeData.name : data[i].category;
 
           marker.bindPopup(popupContent);
 
