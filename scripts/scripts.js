@@ -208,7 +208,7 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
 
             // Set the neighbourhood label
             const neighbourhoodLabel = document.getElementById("neighbourhood");
-            neighbourhoodLabel.textContent = neighbourhoodName;
+            neighbourhoodLabel.textContent = `Crime in :` + neighbourhoodName;
           } else {
             console.log(
               "Error fetching neighbourhood name:",
@@ -247,8 +247,6 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
 
       // Draw the new polygon and assign it to currentPolygon
       currentPolygon = L.polygon(leafletCoords).addTo(map);
-
-
     } else {
       console.log("Unexpected data structure:", boundaryData);
     }
