@@ -119,7 +119,7 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
     const response = await fetch(request);
     const data = await response.json();
     if (response.status === 200) {
-      console.log("Success");
+      console.log("Success", data);
 
       for (let i = 0; i < data.length; i++) {
         // for (let i = 0; i < 20; i++) {
