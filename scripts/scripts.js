@@ -94,6 +94,13 @@ function handleFormSubmit() {
   getCrimes(newLatitude, newLongitude, selectedDate);
 }
 
+//This function will offset randomly the crimes so they dont pile up
+function addRandomOffset(coordinate) {
+  const MAX_OFFSET = 0.0005;  // This determines the maximum distance away from the original point
+  const offset = (Math.random() - 0.5) * 2 * MAX_OFFSET;  // Random value between -MAX_OFFSET and MAX_OFFSET
+  return coordinate + offset;
+}
+
 //Get and draw crimes
 async function getCrimes(newLatitude, newLongitude, selectedDate) {
   // Start the timer
@@ -112,15 +119,21 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
     const response = await fetch(request);
     const data = await response.json();
     if (response.status === 200) {
-      console.log("Success", data);
+      console.log("Success");
 
       for (let i = 0; i < data.length; i++) {
         // for (let i = 0; i < 20; i++) {
 
         const crimeCategory = data[i].category;
-        const crimeLocation = {
+
+        /*const crimeLocation = {
           latitude: parseFloat(data[i].location.latitude),
           longitude: parseFloat(data[i].location.longitude),
+        };*/
+        //Adding a bit offset to dont pile up crimes
+        const crimeLocation = {
+          latitude: addRandomOffset(parseFloat(data[i].location.latitude)),
+          longitude: addRandomOffset(parseFloat(data[i].location.longitude)),
         };
 
         //Code for placeholders
