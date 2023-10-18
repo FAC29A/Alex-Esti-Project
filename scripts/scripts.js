@@ -1,7 +1,6 @@
 let latitude = 51.506533;
 let longitude = -0.15398;
 
-const myForm = document.querySelector("form");
 const mapElement = document.getElementById("map");
 let map; // Declare the map variable outside of the functions
 let markersLayer; // Declare a variable to store markers layer
@@ -15,18 +14,19 @@ const crimeLayers = {};
 document.addEventListener("DOMContentLoaded", function () {
   // Wait for the DOM to be ready
   initializeMap();
-  myForm.addEventListener("submit", handleFormSubmit);
 
-  const postcodeForm = document.forms.postcodeForm;
+  const searchButton = document.getElementById("searchButton");
+  searchButton.addEventListener("click", handleFormSubmit);
+
+  const postcodeButton = document.getElementById("postcodeButton");
   const postcodeInput = document.getElementById("postcode");
 
-  postcodeForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
+  postcodeButton.addEventListener("click", async function () {
     const postcode = postcodeInput.value.trim();
     if (postcode) {
       const coords = await getPostcodeCoordinates(postcode);
       if (coords) {
-        map.setView([coords.latitude, coords.longitude], 13);
+        map.setView([coords.latitude, coords.longitude], 15);
         fetchAndDrawBoundaryPostcode(postcode);
         latitude = coords.latitude;
         longitude = coords.longitude;
@@ -71,9 +71,7 @@ function initializeMap() {
 }
 
 //Get and draw placeholder crimes
-function handleFormSubmit(event) {
-  event.preventDefault();
-
+function handleFormSubmit() {
   // Clear previous markers
   //markersLayer.clearLayers();
 
