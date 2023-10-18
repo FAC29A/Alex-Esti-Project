@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Crimes Compass</title>
+    <title>UK Crimes</title>
     <link rel="stylesheet" href="styles/styles.css" />
 
     <link rel="preconnect" href="https://fonts.gstatic.com" />
@@ -12,8 +12,8 @@
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
       rel="stylesheet"
     />
-
-    <!-- Favicon sizes-->
+    <link rel="icon" href="images/favicon.ico" />
+    <!-- Favicon sizes
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link
       rel="icon"
@@ -30,7 +30,8 @@
     <link rel="manifest" href="./images/favicon/site.webmanifest" />
     <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
     <meta name="msapplication-TileColor" content="#da532c" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#ffffff" />-->
+
     <!--Leaflet Api-->
     <link
       rel="stylesheet"
@@ -51,18 +52,28 @@
       <div id="mapCrosshair"></div>
 
       <div id="controls">
-        <form>
-          <input type="month" id="month" name="month" value="2023-08" />
-          <button type="submit">Search Crime</button>
-          <output></output>
-        </form>
-  
-        <form name="postcodeForm">
-          <input id="postcode" name="postcode" type="text" value="N77NE" />
-          <button id="postcodeButton" type="submit">Locate Postcode</button>
-        </form>
+        <input
+          type="month"
+          id="month"
+          name="month"
+          class="input-box"
+          value="2023-08"
+        />
+        <button id="searchButton" type="submit" class="action-button">
+          Show Crimes
+        </button>
+        <output></output>
+        <input
+          id="postcode"
+          name="postcode"
+          type="text"
+          class="input-box"
+          value="N77NE"
+        />
+        <button id="postcodeButton" type="submit" class="action-button">
+          Locate Postcode
+        </button>
       </div>
-
     </div>
 
     <script src="scripts/data.js"></script>

@@ -1,7 +1,6 @@
 let latitude = 51.506533;
 let longitude = -0.15398;
 
-const myForm = document.querySelector("form");
 const mapElement = document.getElementById("map");
 let map; // Declare the map variable outside of the functions
 let markersLayer; // Declare a variable to store markers layer
@@ -9,24 +8,29 @@ let currentPolygon = null; // This will hold the reference to the drawn polygon
 let selectedDate;
 let currentNeighbourhoodId = null;
 
+//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+const BASE_IMAGE_PATH = "./images/placeholders/";
+const DEFAULT_MARKER_IMAGE = BASE_IMAGE_PATH + "generic.png";
+
 // A dictionary to hold each crime category's layer group
 const crimeLayers = {};
 
 document.addEventListener("DOMContentLoaded", function () {
   // Wait for the DOM to be ready
   initializeMap();
-  myForm.addEventListener("submit", handleFormSubmit);
 
-  const postcodeForm = document.forms.postcodeForm;
+  const searchButton = document.getElementById("searchButton");
+  searchButton.addEventListener("click", handleFormSubmit);
+
+  const postcodeButton = document.getElementById("postcodeButton");
   const postcodeInput = document.getElementById("postcode");
 
-  postcodeForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
+  postcodeButton.addEventListener("click", async function () {
     const postcode = postcodeInput.value.trim();
     if (postcode) {
       const coords = await getPostcodeCoordinates(postcode);
       if (coords) {
-        map.setView([coords.latitude, coords.longitude], 13);
+        map.setView([coords.latitude, coords.longitude], 15);
         fetchAndDrawBoundaryPostcode(postcode);
         latitude = coords.latitude;
         longitude = coords.longitude;
@@ -71,9 +75,7 @@ function initializeMap() {
 }
 
 //Get and draw placeholder crimes
-function handleFormSubmit(event) {
-  event.preventDefault();
-
+function handleFormSubmit() {
   // Clear previous markers
   //markersLayer.clearLayers();
 
@@ -94,7 +96,7 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
   for (let layer in crimeLayers) {
     crimeLayers[layer].clearLayers();
   }
-  //const url = `https://data.police.uk/api/crimes-street/all-crime?lat=${newLatitude}&lng=${newLongitude}&date=${selectedDate}`;
+
   const container = containerRectangle(currentPolygon);
   const url = `https://data.police.uk/api/crimes-street/all-crime?poly=${container}&date=${selectedDate}`;
   const request = new Request(url);
@@ -113,12 +115,29 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
           latitude: parseFloat(data[i].location.latitude),
           longitude: parseFloat(data[i].location.longitude),
         };
+
+        //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        //Code for placeholders
+        const crimeData = crimes.find((c) => c.url === crimeCategory);
+        const imageUrl =
+          crimeData && crimeData.placeholder
+            ? BASE_IMAGE_PATH + crimeData.placeholder
+            : DEFAULT_MARKER_IMAGE;
+
+        const customIcon = L.icon({
+          iconUrl: imageUrl,
+          iconSize: [18, 25],
+          iconAnchor: [12.5, 12.5],
+          popupAnchor: [0, -10],
+        });
+
         // Only add the marker if the crime's location is inside the currentPolygon
         if (isLocationInsidePolygon(currentPolygon, crimeLocation)) {
-          const marker = L.marker([
-            crimeLocation.latitude,
-            crimeLocation.longitude,
-          ]);
+          const marker = L.marker(
+            [crimeLocation.latitude, crimeLocation.longitude],
+            { icon: customIcon }
+          );
+
           const popupContent = data[i].category;
 
           marker.bindPopup(popupContent);
@@ -208,7 +227,7 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
 
             // Set the neighbourhood label
             const neighbourhoodLabel = document.getElementById("neighbourhood");
-            neighbourhoodLabel.textContent = `Crime in :` + neighbourhoodName;
+            neighbourhoodLabel.textContent = `Crime in: ` + neighbourhoodName;
           } else {
             console.log(
               "Error fetching neighbourhood name:",

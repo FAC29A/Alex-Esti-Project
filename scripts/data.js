@@ -2,9 +2,9 @@
 
 crimes = [
   { url: "all-crime", name: "All crime" },
-  { url: "anti-social-behaviour", name: "Anti-social behaviour" },
-  { url: "bicycle-theft", name: "Bicycle theft" },
-  { url: "burglary", name: "Burglary"},
+  { url: "anti-social-behaviour", name: "Anti-social behaviour", placeholder: "anti-social-behaviour.png"},
+  { url: "bicycle-theft", name: "Bicycle theft", placeholder: "bicycle-theft.png"},
+  { url: "burglary", name: "Burglary", placeholder: "burglary.png"},
   { url: "criminal-damage-arson", name: "Criminal damage and arson"},
   { url: "drugs", name: "Drugs" },
   { url: "other-theft", name: "Other theft" },
