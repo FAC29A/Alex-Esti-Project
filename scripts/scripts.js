@@ -8,7 +8,6 @@ let currentPolygon = null; // This will hold the reference to the drawn polygon
 let selectedDate;
 let currentNeighbourhoodId = null;
 
-//XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 const BASE_IMAGE_PATH = "./images/placeholders/";
 const DEFAULT_MARKER_IMAGE = BASE_IMAGE_PATH + "generic.png";
 
@@ -48,7 +47,18 @@ function initializeMap() {
     crimeLayers[crime.url] = L.layerGroup().addTo(map);
   });
 
-  var overlayMaps = crimeLayers;
+  var overlayMaps = {};
+
+  // Construct overlayMaps without "all-crime" and use the crime's name instead of its URL
+Object.keys(crimeLayers).forEach((key) => {
+  if (key !== "all-crime") {
+    const crimeData = crimes.find((c) => c.url === key);
+    if (crimeData && crimeData.name) {
+      overlayMaps[crimeData.name] = crimeLayers[key]; // use the crime's name
+    }
+  }
+});
+
   var layerControl = L.control.layers(baseMaps, overlayMaps).addTo(map);
 
   // Add the OpenStreetMap tile layer
@@ -76,8 +86,6 @@ function initializeMap() {
 
 //Get and draw placeholder crimes
 function handleFormSubmit() {
-  // Clear previous markers
-  //markersLayer.clearLayers();
 
   const newLatitude = latitude;
   const newLongitude = longitude;
@@ -116,7 +124,6 @@ async function getCrimes(newLatitude, newLongitude, selectedDate) {
           longitude: parseFloat(data[i].location.longitude),
         };
 
-        //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
         //Code for placeholders
         const crimeData = crimes.find((c) => c.url === crimeCategory);
         const imageUrl =
@@ -332,7 +339,7 @@ var osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 });
 
-// Define the OpenStreetMap.HOT tile layer (if you want to use it)
+// Define the OpenStreetMap.HOT tile layer
 var osmHOT = L.tileLayer(
   "https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
   {
