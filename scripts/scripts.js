@@ -128,8 +128,7 @@ async function getCrimes(newDate, newPoligon) {
 
     if (response.status === 200) {
       console.log("Success getting crimes");
-      console.log(latitude, longitude);
-
+  
       console.log(`Data lenght ${data.length}`);
 
       if (data.length === 0) {
