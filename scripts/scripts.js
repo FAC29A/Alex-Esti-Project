@@ -9,6 +9,8 @@ let selectedDate = "2023-08";
 let currentNeighbourhoodId = null;
 let zoomLevel = 15;
 
+const crosshair = document.getElementById("mapCrosshair");
+
 const BASE_IMAGE_PATH = "./images/placeholders/";
 const DEFAULT_MARKER_IMAGE = BASE_IMAGE_PATH + "generic.png";
 
@@ -82,6 +84,8 @@ function initializeMap() {
     const mapCenter = map.getCenter();
     latitude = mapCenter.lat.toFixed(6);
     longitude = mapCenter.lng.toFixed(6);
+    // Start the spinner
+    crosshair.classList.add("spin");
   });
 
   map.addEventListener("moveend", () => {
@@ -109,8 +113,9 @@ function addRandomOffset(coordinate) {
 
 //Get and draw crimes
 async function getCrimes(newDate, newPoligon) {
+  // Start the spinner
+  crosshair.classList.add("spin");
   // Start the timer
-
   console.time("getCrimes Timer");
 
   // Clear previous markers from all layers
@@ -128,11 +133,13 @@ async function getCrimes(newDate, newPoligon) {
 
     if (response.status === 200) {
       console.log("Success getting crimes");
-  
+
       console.log(`Data lenght ${data.length}`);
 
       if (data.length === 0) {
-        alert("No crimes recorded for this date. Please select an earlier one.");
+        alert(
+          "No crimes recorded for this date. Please select an earlier one."
+        );
         return;
       }
 
@@ -198,6 +205,9 @@ async function getCrimes(newDate, newPoligon) {
     alert("No crimes recorded for this date. Please select an earlier one.");
   }
   // Stop the timer and display the elapsed time
+  console.timeEnd("getCrimes Timer");
+  // Stop the spinner
+  crosshair.classList.remove("spin");
   console.timeEnd("getCrimes Timer");
 }
 

@@ -55,6 +55,7 @@ body{margin: 0;
     left: 50%;
     width: 5vw;
     height: 5vw;
+    transform-origin: center center;
     background-color: transparent;
     pointer-events: none; /* Makes the crosshair non-interactive */
     transform: translate(-50%, -50%); /* This will center the crosshair */
@@ -110,7 +111,16 @@ body{margin: 0;
     width: auto; /* Adjust as needed */
     box-sizing: border-box; /* Ensure padding and border are included in the width */
 }
-      
+
+/*Will ise it for the crosshairs animation*/
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
 
 /*Media Query for phones */
 @media (max-width: 767px) { }
