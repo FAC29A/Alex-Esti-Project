@@ -19,9 +19,6 @@ document.addEventListener("DOMContentLoaded", function () {
   // Wait for the DOM to be ready
   initializeMap();
 
-  const searchButton = document.getElementById("searchButton");
-  searchButton.addEventListener("click", handleFormSubmit);
-
   const postcodeButton = document.getElementById("postcodeButton");
   const postcodeInput = document.getElementById("postcode");
 
@@ -34,9 +31,6 @@ document.addEventListener("DOMContentLoaded", function () {
         latitude = coords.latitude;
         longitude = coords.longitude;
         map.setView([latitude, longitude], zoomLevel);
-
-        //Not working
-        //getCrimes(selectedDate, currentPolygon);
       }
     }
   });
@@ -120,7 +114,7 @@ async function getCrimes(newDate, newPoligon) {
     const response = await fetch(request);
     const data = await response.json();
     if (response.status === 200) {
-      console.log("Success", data);
+      console.log("Success getting crimes");
 
       for (let i = 0; i < data.length; i++) {
         // for (let i = 0; i < 20; i++) {
@@ -283,7 +277,6 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
         }
 
         // Draw the new polygon and assign it to currentPolygon
-        console.log(`Updating polygon`);
         currentPolygon = L.polygon(leafletCoords).addTo(map);
         getCrimes(selectedDate, currentPolygon);
       } else {
