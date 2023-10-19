@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const postcodeButton = document.getElementById("postcodeButton");
   const postcodeInput = document.getElementById("postcode");
 
+  //Code for Locate Postcode button
   postcodeButton.addEventListener("click", async function () {
     const postcode = postcodeInput.value.trim();
     if (postcode) {
@@ -33,10 +34,9 @@ document.addEventListener("DOMContentLoaded", function () {
         latitude = coords.latitude;
         longitude = coords.longitude;
         map.setView([latitude, longitude], zoomLevel);
-        //await fetchAndDrawBoundaryPostcode(postcode);
-        await fetchAndDrawBoundaryCoordinates(latitude, longitude);
+
         //Not working
-        getCrimes(selectedDate, currentPolygon);
+        //getCrimes(selectedDate, currentPolygon);
       }
     }
   });
@@ -84,17 +84,14 @@ function initializeMap() {
     latitude = mapCenter.lat.toFixed(6);
     longitude = mapCenter.lng.toFixed(6);
     fetchAndDrawBoundaryCoordinates(latitude, longitude);
-    //getCrimes(latitude, longitude, selectedDate);
+   
   });
 }
 
-//Get and draw placeholder crimes
+//Function for Search Button
 function handleFormSubmit() {
-  const newLatitude = latitude;
-  const newLongitude = longitude;
   selectedDate = document.getElementById("month").value;
-
-  fetchAndDrawBoundaryCoordinates(newLatitude, newLongitude);
+  fetchAndDrawBoundaryCoordinates(latitude, longitude);
   getCrimes(selectedDate, currentPolygon);
 }
 
@@ -156,7 +153,7 @@ async function getCrimes(newDate, newPoligon) {
         });
 
         // Only add the marker if the crime's location is inside the currentPolygon
-        // if (isLocationInsidePolygon(currentPolygon, crimeLocation)) {
+         if (isLocationInsidePolygon(currentPolygon, crimeLocation)) {
         const marker = L.marker(
           [crimeLocation.latitude, crimeLocation.longitude],
           { icon: customIcon }
@@ -171,7 +168,7 @@ async function getCrimes(newDate, newPoligon) {
         if (crimeLayers[crimeCategory]) {
           crimeLayers[crimeCategory].addLayer(marker);
         }
-        //}
+      }
       }
     } else {
       console.log("Server Error", data.error);
@@ -200,104 +197,99 @@ async function getPostcodeCoordinates(postcode) {
     console.log("Fetch Error", error);
   }
 }
-/*
-//Draw regions using a postcode
-async function fetchAndDrawBoundaryPostcode(postcode) {
-  //Fetch the coordinates for the given postcode
-  const coords = await getPostcodeCoordinates(postcode);
-  if (!coords) {
-    console.log("Could not fetch coordinates for postcode:", postcode);
-    return;
-  }
-  fetchAndDrawBoundaryCoordinates(coords.latitude, coords.longitude);
-}*/
 
 //Draw regions using latitude and longiute
 async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
-  //Fetch the police force and neighborhood ID using the coordinates
-  const forceAndNeighbourhoodUrl = `https://data.police.uk/api/locate-neighbourhood?q=${myLatitude},${myLongitude}`;
-  let forceId, neighbourhoodId;
+  return new Promise(async (resolve, reject) => {
+    //Fetch the police force and neighborhood ID using the coordinates
+    const forceAndNeighbourhoodUrl = `https://data.police.uk/api/locate-neighbourhood?q=${myLatitude},${myLongitude}`;
+    let forceId, neighbourhoodId;
 
-  try {
-    const response = await fetch(forceAndNeighbourhoodUrl);
-    const data = await response.json();
+    try {
+      const response = await fetch(forceAndNeighbourhoodUrl);
+      const data = await response.json();
 
-    if (response.status === 200 && data) {
-      forceId = data.force;
-      neighbourhoodId = data.neighbourhood;
+      if (response.status === 200 && data) {
+        forceId = data.force;
+        neighbourhoodId = data.neighbourhood;
 
-      // Check if the neighbourhood is the same as before
-      if (neighbourhoodId === currentNeighbourhoodId) {
-        return; // Return early without redrawing
-      }
-      // Update the currentNeighbourhoodId
-      currentNeighbourhoodId = neighbourhoodId;
-
-      // Fetch the name of the neighbourhood using the forceId and neighbourhoodId
-      const neighbourhoodListUrl = `https://data.police.uk/api/${forceId}/neighbourhoods`;
-      try {
-        const neighbourhoodListResponse = await fetch(neighbourhoodListUrl);
-        const neighbourhoodList = await neighbourhoodListResponse.json();
-        if (
-          neighbourhoodListResponse.status === 200 &&
-          neighbourhoodList.length
-        ) {
-          // Find the neighbourhood name using the neighbourhoodId
-          const matchedNeighbourhood = neighbourhoodList.find(
-            (n) => n.id === neighbourhoodId
-          );
-
-          if (matchedNeighbourhood) {
-            const neighbourhoodName = matchedNeighbourhood.name; // This gives the human-readable name
-
-            // Set the neighbourhood label
-            const neighbourhoodLabel = document.getElementById("neighbourhood");
-            neighbourhoodLabel.textContent = `Crime in: ` + neighbourhoodName;
-          } else {
-            console.log(
-              "Error fetching neighbourhood name:",
-              neighbourhoodData.error
-            );
-          }
+        // Check if the neighbourhood is the same as before
+        if (neighbourhoodId === currentNeighbourhoodId) {
+          return; // Return early without redrawing
         }
-      } catch (error) {
-        console.log("Fetch Error", error);
+        // Update the currentNeighbourhoodId
+        currentNeighbourhoodId = neighbourhoodId;
+
+        // Fetch the name of the neighbourhood using the forceId and neighbourhoodId
+        const neighbourhoodListUrl = `https://data.police.uk/api/${forceId}/neighbourhoods`;
+        try {
+          const neighbourhoodListResponse = await fetch(neighbourhoodListUrl);
+          const neighbourhoodList = await neighbourhoodListResponse.json();
+          if (
+            neighbourhoodListResponse.status === 200 &&
+            neighbourhoodList.length
+          ) {
+            // Find the neighbourhood name using the neighbourhoodId
+            const matchedNeighbourhood = neighbourhoodList.find(
+              (n) => n.id === neighbourhoodId
+            );
+
+            if (matchedNeighbourhood) {
+              const neighbourhoodName = matchedNeighbourhood.name; // This gives the human-readable name
+
+              // Set the neighbourhood label
+              const neighbourhoodLabel =
+                document.getElementById("neighbourhood");
+              neighbourhoodLabel.textContent = `Crime in: ` + neighbourhoodName;
+            } else {
+              console.log(
+                "Error fetching neighbourhood name:",
+                neighbourhoodData.error
+              );
+            }
+          }
+        } catch (error) {
+          console.log("Fetch Error", error);
+        }
+      } else {
+        console.log("Error fetching force and neighbourhood:", data.error);
+        return;
       }
-    } else {
-      console.log("Error fetching force and neighbourhood:", data.error);
+    } catch (error) {
+      console.log("Fetch Error", error);
       return;
     }
-  } catch (error) {
-    console.log("Fetch Error", error);
-    return;
-  }
 
-  //Use the police force and neighborhood ID to fetch the boundary
-  const boundaryUrl = `https://data.police.uk/api/${forceId}/${neighbourhoodId}/boundary`;
-  try {
-    const boundaryResponse = await fetch(boundaryUrl);
-    const boundaryData = await boundaryResponse.json();
+    //Use the police force and neighborhood ID to fetch the boundary
+    const boundaryUrl = `https://data.police.uk/api/${forceId}/${neighbourhoodId}/boundary`;
+    try {
+      const boundaryResponse = await fetch(boundaryUrl);
+      const boundaryData = await boundaryResponse.json();
 
-    if (boundaryResponse.status === 200 && Array.isArray(boundaryData)) {
-      const leafletCoords = boundaryData.map((coord) => [
-        parseFloat(coord.latitude),
-        parseFloat(coord.longitude),
-      ]);
+      if (boundaryResponse.status === 200 && Array.isArray(boundaryData)) {
+        const leafletCoords = boundaryData.map((coord) => [
+          parseFloat(coord.latitude),
+          parseFloat(coord.longitude),
+        ]);
 
-      // Remove the previously drawn polygon if it exists
-      if (currentPolygon) {
-        map.removeLayer(currentPolygon);
+        // Remove the previously drawn polygon if it exists
+        if (currentPolygon) {
+          map.removeLayer(currentPolygon);
+        }
+
+        // Draw the new polygon and assign it to currentPolygon
+        console.log(`Updating polygon`);
+        currentPolygon = L.polygon(leafletCoords).addTo(map);
+        getCrimes(selectedDate, currentPolygon);
+      } else {
+        console.log("Unexpected data structure:", boundaryData);
       }
-
-      // Draw the new polygon and assign it to currentPolygon
-      console.log(`Updating polygon`);
-      currentPolygon = L.polygon(leafletCoords).addTo(map);
-    } else {
-      console.log("Unexpected data structure:", boundaryData);
+    } catch (error) {
+      console.log("Fetch Error", error);
     }
-  } catch (error) {
-    console.log("Fetch Error", error);
-  }
+
+    resolve();
+  });
 }
 
 //Function to check if a location is inside a polygon
