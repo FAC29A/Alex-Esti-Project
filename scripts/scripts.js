@@ -128,9 +128,14 @@ async function getCrimes(newDate, newPoligon) {
 
     if (response.status === 200) {
       console.log("Success getting crimes");
-      console.log(latitude,longitude);
+      console.log(latitude, longitude);
 
-      console.log (`Data lenght ${data.length}`);
+      console.log(`Data lenght ${data.length}`);
+
+      if (data.length === 0) {
+        alert("No crimes recorded for this date. Please select an earlier one.");
+        return;
+      }
 
       for (let i = 0; i < data.length; i++) {
         // for (let i = 0; i < 20; i++) {
@@ -191,8 +196,7 @@ async function getCrimes(newDate, newPoligon) {
   } catch (error) {
     console.log("Fetch Error", error);
     console.log("No crimes for that date");
-    alert("No crimes for that date");
-
+    alert("No crimes recorded for this date. Please select an earlier one.");
   }
   // Stop the timer and display the elapsed time
   console.timeEnd("getCrimes Timer");
@@ -216,7 +220,6 @@ async function getPostcodeCoordinates(postcode) {
     console.log("Fetch Error", error);
   }
 }
-
 
 //Draw regions using latitude and longiute
 async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
@@ -359,7 +362,7 @@ function containerRectangle(polygon) {
     [minLat, minLng].join(","), // Bottom-left corner
     [minLat, maxLng].join(","), // Bottom-right corner
     [maxLat, maxLng].join(","), // Top-right corner
-    [maxLat, minLng].join(",") // Top-left corner
+    [maxLat, minLng].join(","), // Top-left corner
   ].join(":");
 }
 
