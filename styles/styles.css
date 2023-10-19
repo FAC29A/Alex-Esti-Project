@@ -35,7 +35,6 @@ body{margin: 0;
     flex-direction: column;
     gap: 0.5rem; /* Spacing between the h1 and calendar */
     padding: 0 2vw;
-
 }
 
 #neighbourhood {
