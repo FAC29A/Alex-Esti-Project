@@ -1,5 +1,5 @@
-let latitude = 51.506533;
-let longitude = -0.15398;
+let latitude = 51.556468;
+let longitude = -0.110779;
 
 const mapElement = document.getElementById("map");
 let map; // Declare the map variable outside of the functions
@@ -21,6 +21,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const postcodeButton = document.getElementById("postcodeButton");
   const postcodeInput = document.getElementById("postcode");
+
+  // Event listener for calendar
+  const monthInputElement = document.getElementById("month");
+
+  // Add an event listener for the "change" event
+  monthInputElement.addEventListener("change", function () {
+    // Update the selectedDate variable with the new value
+    selectedDate = monthInputElement.value;
+
+    // Call the getCrimes function with the updated date
+    getCrimes(selectedDate, currentPolygon);
+  });
 
   //Code for Locate Postcode button
   postcodeButton.addEventListener("click", async function () {
@@ -113,8 +125,12 @@ async function getCrimes(newDate, newPoligon) {
   try {
     const response = await fetch(request);
     const data = await response.json();
+
     if (response.status === 200) {
       console.log("Success getting crimes");
+      console.log(latitude,longitude);
+
+      console.log (`Data lenght ${data.length}`);
 
       for (let i = 0; i < data.length; i++) {
         // for (let i = 0; i < 20; i++) {
@@ -174,6 +190,9 @@ async function getCrimes(newDate, newPoligon) {
     }
   } catch (error) {
     console.log("Fetch Error", error);
+    console.log("No crimes for that date");
+    alert("No crimes for that date");
+
   }
   // Stop the timer and display the elapsed time
   console.timeEnd("getCrimes Timer");
@@ -185,6 +204,7 @@ async function getPostcodeCoordinates(postcode) {
   try {
     const response = await fetch(url);
     const data = await response.json();
+
     if (response.status === 200 && data.result) {
       const { latitude, longitude } = data.result;
       console.log("Postcode coordinates:", latitude, longitude);
@@ -196,6 +216,7 @@ async function getPostcodeCoordinates(postcode) {
     console.log("Fetch Error", error);
   }
 }
+
 
 //Draw regions using latitude and longiute
 async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
@@ -278,6 +299,8 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
 
         // Draw the new polygon and assign it to currentPolygon
         currentPolygon = L.polygon(leafletCoords).addTo(map);
+        //Update selected date
+        selectedDate = document.getElementById("month").value;
         getCrimes(selectedDate, currentPolygon);
       } else {
         console.log("Unexpected data structure:", boundaryData);
@@ -336,8 +359,7 @@ function containerRectangle(polygon) {
     [minLat, minLng].join(","), // Bottom-left corner
     [minLat, maxLng].join(","), // Bottom-right corner
     [maxLat, maxLng].join(","), // Top-right corner
-    [maxLat, minLng].join(","), // Top-left corner
-    [minLat, minLng].join(","), // Close the rectangle by returning to the starting point
+    [maxLat, minLng].join(",") // Top-left corner
   ].join(":");
 }
 
