@@ -208,7 +208,6 @@ async function getCrimes(newDate, newPoligon) {
   console.timeEnd("getCrimes Timer");
   // Stop the spinner
   crosshair.classList.remove("spin");
-  console.timeEnd("getCrimes Timer");
 }
 
 //Get coordinates from Postcodes
@@ -247,6 +246,7 @@ async function fetchAndDrawBoundaryCoordinates(myLatitude, myLongitude) {
 
         // Check if the neighbourhood is the same as before
         if (neighbourhoodId === currentNeighbourhoodId) {
+          crosshair.classList.remove("spin");
           return; // Return early without redrawing
         }
         // Update the currentNeighbourhoodId
