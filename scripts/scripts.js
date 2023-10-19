@@ -84,7 +84,6 @@ function initializeMap() {
     latitude = mapCenter.lat.toFixed(6);
     longitude = mapCenter.lng.toFixed(6);
     fetchAndDrawBoundaryCoordinates(latitude, longitude);
-   
   });
 }
 
@@ -145,30 +144,36 @@ async function getCrimes(newDate, newPoligon) {
             ? BASE_IMAGE_PATH + crimeData.placeholder
             : DEFAULT_MARKER_IMAGE;
 
+        //Making the icon size dinamic
+        const viewportHeight = window.innerHeight;
+        const iconHeightInVH = 3; // height to be 4% of the viewport height
+        const computedIconHeight = (viewportHeight * iconHeightInVH) / 100;
+        const computedIconWidth = (computedIconHeight * 18) / 25; // Maintain the aspect ratio
+
         const customIcon = L.icon({
           iconUrl: imageUrl,
-          iconSize: [18, 25],
-          iconAnchor: [12.5, 12.5],
+          iconSize: [computedIconWidth, computedIconHeight],
+          iconAnchor: [computedIconWidth / 2, computedIconHeight / 2],
           popupAnchor: [0, -10],
         });
 
         // Only add the marker if the crime's location is inside the currentPolygon
-         if (isLocationInsidePolygon(currentPolygon, crimeLocation)) {
-        const marker = L.marker(
-          [crimeLocation.latitude, crimeLocation.longitude],
-          { icon: customIcon }
-        );
+        if (isLocationInsidePolygon(currentPolygon, crimeLocation)) {
+          const marker = L.marker(
+            [crimeLocation.latitude, crimeLocation.longitude],
+            { icon: customIcon }
+          );
 
-        const popupContent =
-          crimeData && crimeData.name ? crimeData.name : data[i].category;
+          const popupContent =
+            crimeData && crimeData.name ? crimeData.name : data[i].category;
 
-        marker.bindPopup(popupContent);
+          marker.bindPopup(popupContent);
 
-        // Add the marker to the appropriate layer group based on the crime category
-        if (crimeLayers[crimeCategory]) {
-          crimeLayers[crimeCategory].addLayer(marker);
+          // Add the marker to the appropriate layer group based on the crime category
+          if (crimeLayers[crimeCategory]) {
+            crimeLayers[crimeCategory].addLayer(marker);
+          }
         }
-      }
       }
     } else {
       console.log("Server Error", data.error);
