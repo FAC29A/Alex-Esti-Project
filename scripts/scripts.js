@@ -52,7 +52,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function initializeMap() {
   // Initialize the map at the beginning
-  map = L.map("map").setView([latitude, longitude], zoomLevel);
+  //map = L.map("map").setView([latitude, longitude], zoomLevel);
+  map = L.map('map', { zoomControl: false }).setView([latitude, longitude], zoomLevel);
 
   // Initialize a layer group for each crime category
   crimes.forEach((crime) => {

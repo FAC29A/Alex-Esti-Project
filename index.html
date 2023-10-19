@@ -48,29 +48,16 @@
   </head>
   <body>
     <div id="map">
-      <h1 id="neighbourhood">Crime in UK</h1>
+      <div id="titleAndCalendar">
+        <h1 id="neighbourhood">Crime in UK</h1>
+        <input type="month" id="month" name="month" class="input-box" value="2023-08"/>
+      </div>
       <div id="mapCrosshair"></div>
 
-      <div id="controls">
-        <input
-          type="month"
-          id="month"
-          name="month"
-          class="input-box"
-          value="2023-08"
-        />
-   
-        <input
-          id="postcode"
-          name="postcode"
-          type="text"
-          class="input-box"
-          value="N77NE"
-        />
-        <button id="postcodeButton" type="submit" class="action-button">
-          Locate Postcode
-        </button>
-      </div>
+    <div id="controls">    
+      <input id="postcode" name="postcode" type="text" class="input-box" value="N77NE"/>
+      <button id="postcodeButton" type="submit" class="action-button">Locate Postcode</button>
+     
     </div>
 
     <script src="scripts/data.js"></script>
