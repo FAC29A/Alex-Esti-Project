@@ -125,6 +125,7 @@ async function getCrimes(newDate, newPoligon) {
   }
 
   const container = containerRectangle(newPoligon);
+  
   const url = `https://data.police.uk/api/crimes-street/all-crime?poly=${container}&date=${newDate}`;
   const request = new Request(url);
 
@@ -354,6 +355,9 @@ function containerRectangle(polygon) {
   }
 
   let latlngs = polygon.getLatLngs()[0];
+  
+  //Just for testing returning the whole polygon
+  //let coordsList = [];
 
   let minLat = Infinity;
   let maxLat = -Infinity;
@@ -365,6 +369,9 @@ function containerRectangle(polygon) {
     if (latlng.lat > maxLat) maxLat = latlng.lat;
     if (latlng.lng < minLng) minLng = latlng.lng;
     if (latlng.lng > maxLng) maxLng = latlng.lng;
+
+    //Just for testing returning the whole polygon
+    //coordsList.push([latlng.lat, latlng.lng].join(","));
   });
 
   // Create and return the bounding rectangle using the computed min and max values
@@ -374,6 +381,9 @@ function containerRectangle(polygon) {
     [maxLat, maxLng].join(","), // Top-right corner
     [maxLat, minLng].join(","), // Top-left corner
   ].join(":");
+
+  //Just for testing returning the whole polygon
+ // return coordsList.join(":");
 }
 
 // Define the OpenStreetMap tile layer
