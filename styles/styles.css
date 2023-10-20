@@ -39,8 +39,13 @@ body{margin: 0;
 }
 
 /*Style for postcode texbox */
+#postcodeButton{
+    flex: 1;
+}
+
 #postcode{
-    width: auto;
+    flex: 1;
+    text-align: center; 
 }
 
 #map {
@@ -91,7 +96,7 @@ body{margin: 0;
     flex-wrap: wrap;
     position: absolute;
     color: var(--medium-dark-grey);
-    width: 90%;
+    width: auto;
     margin: 1vw;
     padding: 1vw 1vw;
     gap: 1vw; 
