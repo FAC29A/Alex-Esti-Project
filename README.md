@@ -31,7 +31,19 @@ We will be breaking down the project into several key milestones:
 4. They engage with the map markers to obtain detailed information about each crime.
 
 ```mermaid
-%%{init: {'theme':'base'}}%%
+%%{
+  init: {
+    'theme': 'base',
+    'themeVariables': {
+      'primaryColor': '#BB2528',
+      'primaryTextColor': '#fff',
+      'primaryBorderColor': '#7C0000',
+      'lineColor': '#F8B229',
+      'secondaryColor': '#006100',
+      'tertiaryColor': '#fff'
+    }
+  }
+}%%
 graph TD
     subgraph Process
         Function_getCrimes-->|coordinates|Fetch_coordinates;
