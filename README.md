@@ -30,6 +30,37 @@ We will be breaking down the project into several key milestones:
 3. They choose a month from the date picker to view crimes for that period.
 4. They engage with the map markers to obtain detailed information about each crime.
 
+```mermaid
+graph TD
+    st[Function getCrimes: Coordinates]
+    stp[Fetch(postcode): coordinates]
+    stp.style fill:lightblue
+    rm[Relocate map & get new coordinates]
+    gc[Fetch(coordinates): Boundary & Neighbourhood name]
+    gc.style fill:lightblue
+    rc[Simplified Container]
+    rc.style fill:grey
+    gcr[Fetch(boundary): Crimes Inside Boundary]
+    gcr.style fill:lightblue
+    lay[Distribute crimes to layers]
+    fil[Filter crimes outside neighbourhood]
+    e[Draw placeholders]
+
+    st --> gc
+    stp --> rm
+    rm --> gc
+    gc --> rc
+    gc --> gcr
+    rc --> gcr
+    gcr --> fil
+    fil --> lay
+    lay --> e
+```
+
+
+
+
+
 ```graphviz
 digraph graphname {
     size="5.5,5.5";
