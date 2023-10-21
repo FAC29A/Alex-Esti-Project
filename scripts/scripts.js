@@ -223,11 +223,17 @@ async function getPostcodeCoordinates(postcode) {
       const { latitude, longitude } = data.result;
       console.log("Postcode coordinates:", latitude, longitude);
       return { latitude, longitude };
+    } else if (response.status === 404) {
+      //Invalid postcode
+      console.log(data.error);
+      alert("Please enter a valid postcode.");
     } else {
       console.log("Server Error", data.error);
+      alert("There was an error fetching the postcode information. Please try again later.");
     }
   } catch (error) {
     console.log("Fetch Error", error);
+    alert("There was an unexpected error. Please check your internet connection and try again.");
   }
 }
 
