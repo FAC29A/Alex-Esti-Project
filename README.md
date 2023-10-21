@@ -32,29 +32,19 @@ We will be breaking down the project into several key milestones:
 
 ```mermaid
 graph TD
-    st[Function getCrimes: Coordinates]
-    stp[Fetch(postcode): coordinates]
-    stp.style fill:lightblue
-    rm[Relocate map & get new coordinates]
-    gc[Fetch(coordinates): Boundary & Neighbourhood name]
-    gc.style fill:lightblue
-    rc[Simplified Container]
-    rc.style fill:grey
-    gcr[Fetch(boundary): Crimes Inside Boundary]
-    gcr.style fill:lightblue
-    lay[Distribute crimes to layers]
-    fil[Filter crimes outside neighbourhood]
-    e[Draw placeholders]
+    subgraph Process
+        st[Function getCrimes: Coordinates]
+        stp[Fetch(postcode): coordinates]
+        stp-->rm[Relocate map & get new coordinates]
+        rm-->gc[Fetch(coordinates): Boundary & Neighbourhood name]
+        gc-->rc[Simplified Container]
+        gc-->gcr[Fetch(boundary): Crimes Inside Boundary]
+        rc-->gcr
+        gcr-->fil[Filter crimes outside neighbourhood]
+        fil-->lay[Distribute crimes to layers]
+        lay-->e[Draw placeholders]
+    end
 
-    st --> gc
-    stp --> rm
-    rm --> gc
-    gc --> rc
-    gc --> gcr
-    rc --> gcr
-    gcr --> fil
-    fil --> lay
-    lay --> e
 ```
 
 
