@@ -53,6 +53,10 @@ One of the primary challenges encountered was managing the substantial amount of
 ### Limitations of Boundary-based Crime Retrieval
 While police.data provides a method to exclusively retrieve crimes within a specific boundary, these boundaries are intricate, often composed of approximately 80 segments. This complexity often led to a 403 error when attempting a fetch operation due to the sheer granularity of the boundary data.
 
+<div align="center">
+<img width="700" alt="Rectangle Container" src="https://github.com/FAC29A/Alex-Esti-Project/assets/94972293/fa131ce3-65ec-49f0-9eb4-93ba4f0ea9ab">
+</div>
+
 ### Solution: Container Rectangle for Crime Refinement
 To overcome the aforementioned challenges, we developed a function that processes a complex polygon (defining a neighbourhood) and derives its container rectangle. This approach effectively narrows down the number of crimes obtained from the API. However, it's worth noting that this strategy might include some crimes from outside the actual neighbourhood (illustrated as gray areas in the graphic). These extraneous data points are subsequently filtered out to ensure accuracy.
 
