@@ -49,18 +49,18 @@ graph TD;
 ```mermaid
 graph TD
     subgraph Process
-        st[Function getCrimes: Coordinates]
-        stp[Fetch(postcode): coordinates]
-        stp-->rm[Relocate map & get new coordinates]
-        rm-->gc[Fetch(coordinates): Boundary & Neighbourhood name]
-        gc-->rc[Simplified Container]
-        gc-->gcr[Fetch(boundary): Crimes Inside Boundary]
-        rc-->gcr
-        gcr-->fil[Filter crimes outside neighbourhood]
-        fil-->lay[Distribute crimes to layers]
-        lay-->e[Draw placeholders]
-    end
+        Function_getCrimes:Coordinates-->Fetch(coordinates):_Boundary_&_Neighbourhood_name;
+        Fetch(coordinates):_Boundary_&_Neighbourhood_name;-->Fetch(boundary):_Crimes_Inside_Boundary;
+        Fetch(boundary):_Crimes_Inside_Boundary-->Filter_crimes_outside_neighbourhood;
+        Filter_crimes_outside_neighbourhood-->Distribute_crimes_to_layers;
+        Distribute_crimes_to_layers-->Draw_placeholders;
 
+        Fetch(coordinates):_Boundary_&_Neighbourhood_name->Simplified_Container;
+        Simplified_Container->Fetch(boundary):_Crimes_Inside_Boundary;
+
+        Fetch(postcode):coordinates->Relocate_map_&_get_new_coordinates;
+        Relocate_map_&_get_new_coordinates->Fetch(coordinates):_Boundary_&_Neighbourhood_name;
+    end
 ```
 
 
