@@ -43,6 +43,17 @@ graph TD
         Fetch_postcode-->|coordinates|Relocate_map;
         Relocate_map-->|coordinates|Fetch_coordinates;
     end
+
+classDef default fill:#ffffff,stroke:#000000,stroke-width:1px;
+    class Function_getCrimes default
+    class Fetch_coordinates default
+    class Fetch_boundary default
+    class Filter_crimes default
+    class Distribute_crimes default
+    class Draw_placeholders default
+    class Simplified_Container default
+    class Fetch_postcode default
+    class Relocate_map default
 ```
 
 |Navigate with expertID|Expert;
