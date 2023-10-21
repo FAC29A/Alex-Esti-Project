@@ -33,15 +33,15 @@ We will be breaking down the project into several key milestones:
 ```mermaid
 graph TD
     subgraph Process
-        Function_getCrimes-->coordinates|Fetch_coordinates;
-        Fetch_coordinates-->boundary|Fetch_boundary;
-        Fetch_boundary-->crimes|Filter_crimes;
-        Filter_crimes-->crimes|Distribute_crimes;
-        Distribute_crimes-->placeholders|Draw_placeholders;
-        Fetch_coordinates-->boundary|Simplified_Container;
-        Simplified_Container-->simplifiedBoundary|Fetch_boundary;
-        Fetch_postcode-->coordinates|Relocate_map;
-        Relocate_map-->coordinates|Fetch_coordinates;
+        Function_getCrimes-->|coordinates|Fetch_coordinates;
+        Fetch_coordinates-->|boundary|Fetch_boundary;
+        Fetch_boundary-->|crimes|Filter_crimes;
+        Filter_crimes-->|crimes|Distribute_crimes;
+        Distribute_crimes-->|placeholders|Draw_placeholders;
+        Fetch_coordinates-->|boundary|Simplified_Container;
+        Simplified_Container-->|simplifiedBoundary|Fetch_boundary;
+        Fetch_postcode-->|coordinates|Relocate_map;
+        Relocate_map-->|coordinates|Fetch_coordinates;
     end
 ```
 
