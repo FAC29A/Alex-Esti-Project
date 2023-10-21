@@ -46,8 +46,6 @@ graph TD
     end
 ```
 
-|Navigate with expertID|Expert;
-
 ## Challenges
 ### Handling High Volume of Crime Data
 One of the primary challenges encountered was managing the substantial amount of crime data returned by the police.data API. As the methods utilized were segmented by month, they often produced an overwhelmingly high count of crimes.
