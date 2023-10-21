@@ -66,5 +66,5 @@ To overcome the aforementioned challenges, we developed a function that processe
 
 ## Contributors
 
-- [Alex](https://github.com/AlexVOiceover)
+- [Alexander](https://github.com/AlexVOiceover)
 - [Esti](https://github.com/Estishi87)
