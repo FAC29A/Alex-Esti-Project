@@ -31,13 +31,13 @@ document.addEventListener("DOMContentLoaded", function () {
   monthInputElement.addEventListener("change", function () {
     // Update the selectedDate variable with the new value
     selectedDate = monthInputElement.value;
-
     // Call the getCrimes function with the updated date
     getCrimes(selectedDate, currentPolygon);
   });
 
-  //Code for Locate Postcode button
-  postcodeButton.addEventListener("click", async function () {
+  // Function to handle the action when the postcode button is clicked or when 'Enter' key is pressed in the postcode input.
+  const handlePostcodeAction = async function () {
+    // Get the postcode value from the input and trim any whitespace.
     const postcode = postcodeInput.value.trim();
     if (postcode) {
       const coords = await getPostcodeCoordinates(postcode);
@@ -47,7 +47,19 @@ document.addEventListener("DOMContentLoaded", function () {
         map.setView([latitude, longitude], zoomLevel);
       }
     }
+  };
+
+  //Code for Locate Postcode button
+  postcodeButton.addEventListener("click", handlePostcodeAction);
+
+  // Event listener for Enter key press in postcodeInput
+  postcodeInput.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      handlePostcodeAction();
+    }
   });
+
+
 });
 
 function initializeMap() {
