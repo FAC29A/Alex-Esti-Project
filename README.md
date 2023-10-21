@@ -30,8 +30,6 @@ We will be breaking down the project into several key milestones:
 3. They choose a month from the date picker to view crimes for that period.
 4. They engage with the map markers to obtain detailed information about each crime.
 
-
-
 ```mermaid
 graph TD
     subgraph Process
@@ -45,67 +43,6 @@ graph TD
         Fetch_postcode-->Relocate_map
         Relocate_map-->Fetch_coordinates
     end
-
-    classDef default fill:#ffffff,stroke:#000000,stroke-width:1px;
-    class Function_getCrimes default
-    class Fetch_coordinates default
-    class Fetch_boundary default
-    class Filter_crimes default
-    class Distribute_crimes default
-    class Draw_placeholders default
-    class Simplified_Container default
-    class Fetch_postcode default
-    class Relocate_map default
-```
-
-```mermaid
-graph TD
-    subgraph Process
-        Function_getCrimes:Coordinates-->Fetch(coordinates):_Boundary_&_Neighbourhood_name;
-        Fetch(coordinates):_Boundary_&_Neighbourhood_name;-->Fetch(boundary):_Crimes_Inside_Boundary;
-        Fetch(boundary):_Crimes_Inside_Boundary-->Filter_crimes_outside_neighbourhood;
-        Filter_crimes_outside_neighbourhood-->Distribute_crimes_to_layers;
-        Distribute_crimes_to_layers-->Draw_placeholders;
-
-        Fetch(coordinates):_Boundary_&_Neighbourhood_name->Simplified_Container;
-        Simplified_Container->Fetch(boundary):_Crimes_Inside_Boundary;
-
-        Fetch(postcode):coordinates->Relocate_map_&_get_new_coordinates;
-        Relocate_map_&_get_new_coordinates->Fetch(coordinates):_Boundary_&_Neighbourhood_name;
-    end
-```
-
-
-
-
-
-```graphviz
-digraph graphname {
-    size="5.5,5.5";
-    bgcolor="transparent";
-    ratio="fill";
-    edge [color="grey"]
-    node [shape=box, style =filled, fillcolor="white"]
-    st [shape=oval,label="Function getCrimes: Coordinates"]
-    stp [shape=oval,label="Fetch(postcode): coordinates", fillcolor="lightblue"]
-    rm [label="Relocate map & get new coordinates"]
-    gc [label="Fetch(coordinates): Boundary & Neighbourhood name", fillcolor="lightblue"]
-    rc [label="Simplified Container", fillcolor="grey",style=filled]
-    gcr [label="Fetch(boundary): Crimes Inside Boundary", fillcolor="lightblue"]
-    lay [label="Distribute crimes to layers"]
-    fil [label="Filter crimes outside neighbourhood"]
-    e [label="Draw placeholders"]
-
-    st -> gc
-    stp -> rm
-    rm -> gc
-    gc -> rc
-    gc -> gcr
-    rc -> gcr
-    gcr -> fil
-    fil -> lay
-    lay -> e
-}
 
 ```
 
