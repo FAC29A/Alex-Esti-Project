@@ -5,11 +5,8 @@
 UK Crimes provides users with real crime data based on their selected location and date. Users can input a postcode to zoom into a specific location and select a date to view crimes recorded for that month. The app fetches data from the UK police API and visualizes the crimes on a map with distinct markers based on crime categories.
 
 <div align="center">
-<img width="700" alt="contact" src="https://github.com/FAC29A/Alex-Esti-Project/assets/94972293/6608c9b2-b12f-49bf-9329-f74294aa233f">
+<img width="700" alt="UK Crimes" src="https://github.com/FAC29A/Alex-Esti-Project/assets/94972293/6608c9b2-b12f-49bf-9329-f74294aa233f">
 </div>
-
-![container](https://github.com/FAC29A/Alex-Esti-Project/assets/94972293/6608c9b2-b12f-49bf-9329-f74294aa233f)
-
 
 ## Features
 
@@ -72,7 +69,10 @@ While police.data provides a method to exclusively retrieve crimes within a spec
 
 ### Solution: Container Rectangle for Crime Refinement
 To overcome the aforementioned challenges, we developed a function that processes a complex polygon (defining a neighbourhood) and derives its container rectangle. This approach effectively narrows down the number of crimes obtained from the API. However, it's worth noting that this strategy might include some crimes from outside the actual neighbourhood (illustrated as gray areas in the graphic). These extraneous data points are subsequently filtered out to ensure accuracy.
-![boundary](https://github.com/FAC29A/Alex-Esti-Project/assets/94972293/f5e9ab2b-bf2d-4b4b-8726-b0a8526e516a)
+
+<div align="center">
+<img width="700" alt="Rectangle Container" src="https://github.com/FAC29A/Alex-Esti-Project/assets/94972293/f5e9ab2b-bf2d-4b4b-8726-b0a8526e516a">
+</div>
 
 ## Contributors
 
