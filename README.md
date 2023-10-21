@@ -33,17 +33,29 @@ We will be breaking down the project into several key milestones:
 
 
 ```mermaid
-graph TD;
-    subgraph index.html
-        About_Us-->Your_Needs;
-        Your_Needs-->Our_Experts;
-        Our_Experts-->Testimonials;
+graph TD
+    subgraph Process
+        Function_getCrimes-->Fetch_coordinates
+        Fetch_coordinates-->Fetch_boundary
+        Fetch_boundary-->Filter_crimes
+        Filter_crimes-->Distribute_crimes
+        Distribute_crimes-->Draw_placeholders
+        Fetch_coordinates-->Simplified_Container
+        Simplified_Container-->Fetch_boundary
+        Fetch_postcode-->Relocate_map
+        Relocate_map-->Fetch_coordinates
     end
 
-    subgraph expert.html
-        Our_Experts-->|Navigate with expertID|Expert;
-        Expert-->|Back to experts|Our_Experts;
-    end 
+    classDef default fill:#ffffff,stroke:#000000,stroke-width:1px;
+    class Function_getCrimes default
+    class Fetch_coordinates default
+    class Fetch_boundary default
+    class Filter_crimes default
+    class Distribute_crimes default
+    class Draw_placeholders default
+    class Simplified_Container default
+    class Fetch_postcode default
+    class Relocate_map default
 ```
 
 ```mermaid
