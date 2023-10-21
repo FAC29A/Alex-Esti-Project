@@ -30,6 +30,22 @@ We will be breaking down the project into several key milestones:
 3. They choose a month from the date picker to view crimes for that period.
 4. They engage with the map markers to obtain detailed information about each crime.
 
+
+
+```mermaid
+graph TD;
+    subgraph index.html
+        About_Us-->Your_Needs;
+        Your_Needs-->Our_Experts;
+        Our_Experts-->Testimonials;
+    end
+
+    subgraph expert.html
+        Our_Experts-->|Navigate with expertID|Expert;
+        Expert-->|Back to experts|Our_Experts;
+    end 
+```
+
 ```mermaid
 graph TD
     subgraph Process
