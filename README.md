@@ -31,6 +31,7 @@ We will be breaking down the project into several key milestones:
 4. They engage with the map markers to obtain detailed information about each crime.
 
 ```mermaid
+%%{init: {'theme':'forest'}}%%
 graph TD
     subgraph Process
         Function_getCrimes-->|coordinates|Fetch_coordinates;
