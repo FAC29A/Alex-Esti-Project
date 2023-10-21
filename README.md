@@ -1,36 +1,76 @@
-# Crimes Compass
-
-Welcome to the Crimes Compass project! This project is designed to provide a visual representation of crime data using maps and charts. As we embark on this journey, we aim to create an informative and interactive tool for understanding and analyzing crime statistics.
+# UK Crimes
 
 ## Project Overview
 
-The objective of Crimes Compass is to utilize the power of police APIs to display crime data on a map. By integrating geographic data with crime statistics, we hope to offer users a comprehensive view of crime patterns in different areas.
+UK Crimes provides users with real crime data based on their selected location and date. Users can input a postcode to zoom into a specific location and select a date to view crimes recorded for that month. The app fetches data from the UK police API and visualizes the crimes on a map with distinct markers based on crime categories.
 
-### Project Instructions
+![container](https://github.com/FAC29A/Alex-Esti-Project/assets/94972293/d83611d3-bf52-4283-8f4f-55ab00b73315)
 
-You can find the detailed project instructions and requirements on our [Project Instructions Page](https://learn.foundersandcoders.com/course/syllabus/foundation/http/project/). Please review the instructions carefully to ensure that we're on the right track.
+
+## Features
+
+* Dynamic Map Visualization: View crimes on a map with distinct markers.
+* Postcode Search: Input a postcode to zoom into a specific location.
+* Date Selection: Choose a specific month to view the crimes recorded for that period.
+* Responsive Design: The app is designed to be responsive and works across various device sizes.
+* Spinning Crosshair: A visual indicator that shows when the app is fetching data.
 
 ## Project Milestones
 
 We will be breaking down the project into several key milestones:
 
-1. **Data Integration**: We will work on fetching and processing data from police APIs, focusing on crime statistics.
+1. **Map Integration**: We use leaflet to draw our map. It is a great free API with some capabilities like custom placeholders and layers.
+2. **Data Integration**: We will work on fetching and processing data from the police.data API for both crimes data and neighbourhood boundaries. We use postcodes.io to get geographical coordinates from a postcode.
+3. **Optimization and User Interaction**: Enhancing the user experience by allowing users to interact with the map.
 
-2. **Map Integration**: Implementing a map view that displays crime data with a heatmap.
+## User Journey
+1. The user opens the app in their browser.
+2. They pan over the map to different neighbourhoods or input a postcode to focus the map on a specific location.
+3. They choose a month from the date picker to view crimes for that period.
+4. They engage with the map markers to obtain detailed information about each crime.
 
-3. **Chart Creation**: Developing charts to visualize the distribution of different types of crimes.
+```graphviz
+digraph graphname {
+    size="5.5,5.5";
+    bgcolor="transparent";
+    ratio="fill";
+    edge [color="grey"]
+    node [shape=box, style =filled, fillcolor="white"]
+    st [shape=oval,label="Function getCrimes: Coordinates"]
+    stp [shape=oval,label="Fetch(postcode): coordinates", fillcolor="lightblue"]
+    rm [label="Relocate map & get new coordinates"]
+    gc [label="Fetch(coordinates): Boundary & Neighbourhood name", fillcolor="lightblue"]
+    rc [label="Simplified Container", fillcolor="grey",style=filled]
+    gcr [label="Fetch(boundary): Crimes Inside Boundary", fillcolor="lightblue"]
+    lay [label="Distribute crimes to layers"]
+    fil [label="Filter crimes outside neighbourhood"]
+    e [label="Draw placeholders"]
 
-4. **User Interaction**: Enhancing the user experience by allowing users to interact with the map and charts.
+    st -> gc
+    stp -> rm
+    rm -> gc
+    gc -> rc
+    gc -> gcr
+    rc -> gcr
+    gcr -> fil
+    fil -> lay
+    lay -> e
+}
 
-5. **Project Deployment**: Preparing the project for deployment.
+```
 
-We look forward to collaborating on this project and turning our vision of Crimes Compass into a reality.
+## Challenges
+### Handling High Volume of Crime Data
+One of the primary challenges encountered was managing the substantial amount of crime data returned by the police.data API. As the methods utilized were segmented by month, they often produced an overwhelmingly high count of crimes.
+
+### Limitations of Boundary-based Crime Retrieval
+While police.data provides a method to exclusively retrieve crimes within a specific boundary, these boundaries are intricate, often composed of approximately 80 segments. This complexity often led to a 403 error when attempting a fetch operation due to the sheer granularity of the boundary data.
+
+### Solution: Container Rectangle for Crime Refinement
+To overcome the aforementioned challenges, we developed a function that processes a complex polygon (defining a neighbourhood) and derives its container rectangle. This approach effectively narrows down the number of crimes obtained from the API. However, it's worth noting that this strategy might include some crimes from outside the actual neighbourhood (illustrated as gray areas in the graphic). These extraneous data points are subsequently filtered out to ensure accuracy.
+![boundary](https://github.com/FAC29A/Alex-Esti-Project/assets/94972293/f5e9ab2b-bf2d-4b4b-8726-b0a8526e516a)
 
 ## Contributors
 
 - [Alex](https://github.com/AlexVOiceover)
 - [Esti](https://github.com/Estishi87)
-
-Feel free to add your name and your team members as you collaborate on this project!
-
-Let's build an amazing Crimes Compass together!
