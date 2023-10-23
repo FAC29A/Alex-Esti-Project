@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
 function initializeMap() {
   // Initialize the map at the beginning
   //map = L.map("map").setView([latitude, longitude], zoomLevel);
-  map = L.map('map', { zoomControl: false }).setView([latitude, longitude], zoomLevel);
+  map = L.map('map', { zoomControl: true }).setView([latitude, longitude], zoomLevel);
 
   // Initialize a layer group for each crime category
   crimes.forEach((crime) => {
@@ -141,9 +141,12 @@ async function getCrimes(newDate, newPoligon) {
   const url = `https://data.police.uk/api/crimes-street/all-crime?poly=${container}&date=${newDate}`;
   const request = new Request(url);
 
+
   try {
     const response = await fetch(request);
     const data = await response.json();
+
+    console.log(data);
 
     if (response.status === 200) {
       console.log("Success getting crimes");
