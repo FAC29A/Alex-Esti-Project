@@ -134,4 +134,6 @@ body{margin: 0;
     #neighbourhood {
         white-space: normal; /* Allow wrapping */
     }
+
+    /* Dissapear the + - buttons on phone*/
 }
