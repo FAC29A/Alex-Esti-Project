@@ -62,25 +62,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-// function initializeMap() {
-//   // Initialize the map at the beginning
-//   //map = L.map("map").setView([latitude, longitude], zoomLevel);
-//   map = L.map('map', { zoomControl: true }).setView([latitude, longitude], zoomLevel);
+function initializeMap() {
+  // Set default zoomControl to true
+  var zoomControl = true;
 
-  function initializeMap() {
-    // Set default zoomControl to true
-    var zoomControl = true;
-  
-    // Check if the screen width is less than a threshold for smartphones
-    if (window.innerWidth < 768) {
-      zoomControl = false;
-    }
-  
-    // Initialize the map with the zoomControl option
-    map = L.map('map', { zoomControl: zoomControl }).setView([latitude, longitude], zoomLevel);
-  
-  
+  // Check if the screen width is less than a threshold for smartphones
+  if (window.innerWidth < 768) {
+    zoomControl = false;
+  }
 
+  // Initialize the map with the zoomControl option
+  map = L.map('map', { zoomControl: zoomControl }).setView([latitude, longitude], zoomLevel);
 
   // Initialize a layer group for each crime category
   crimes.forEach((crime) => {
